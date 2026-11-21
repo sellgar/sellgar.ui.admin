@@ -23,6 +23,9 @@
 - Route tokens принадлежат отдельному пакету `@library/route-tokens`.
 - UI kit: `@sellgar/kit`; иконки брать из `@sellgar/kit/icons`, не из font-class API.
 - Домен и HTTP: `@library/domain`.
+- У характеристик `unitCode` — идентификатор для команд, `unit` — данные справочника.
+  Значения и поля ввода показывают `unit.symbol`, сведения о свойстве — `unit.name`
+  и `unit.symbol`. Коды не используются как подписи единиц.
 - Вся документация пишется на русском языке; paths, package names, команды и API identifiers оставлять как code literals.
 
 ## Входные точки

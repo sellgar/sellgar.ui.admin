@@ -18,6 +18,7 @@ export class ProductPropertiesMapper {
         propertyName: field.property.name,
         kind: field.property.kind,
         unitCode: field.property.unitCode,
+        unitSymbol: field.property.unit?.symbol ?? null,
         required: field.required,
         multiple: field.multiple,
         options: field.property.options.map((option) => ({ code: option.code, name: option.name })),

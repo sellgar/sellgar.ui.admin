@@ -12,6 +12,7 @@ export const propertySchema = Yup.object({
   propertyName: Yup.string().required(),
   kind: Yup.mixed<PropertyKind>().oneOf(Object.values(PropertyKind)).required(),
   unitCode: Yup.string().nullable().defined(),
+  unitSymbol: Yup.string().nullable().defined(),
   required: Yup.boolean().required(),
   multiple: Yup.boolean().required(),
   options: Yup.array()

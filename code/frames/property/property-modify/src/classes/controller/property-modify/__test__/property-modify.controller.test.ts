@@ -17,6 +17,7 @@ const createController = () => {
     name: 'Свойство',
     kind: 'TEXT',
     unitCode: null,
+    unit: null,
     options: [],
     description: 'Описание\nСвойство',
     version: 3,

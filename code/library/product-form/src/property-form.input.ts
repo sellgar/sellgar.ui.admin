@@ -9,6 +9,7 @@ export interface ProductPropertyFormInput {
   propertyName: string;
   kind: PropertyKind;
   unitCode: string | null;
+  unitSymbol: string | null;
   required: boolean;
   multiple: boolean;
   options: Array<{ code: string; name: string }>;

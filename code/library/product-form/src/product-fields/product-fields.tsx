@@ -29,7 +29,7 @@ export const ProductFields: React.FC<IProps> = (props) => {
                 )
                 .filter((value) => value !== null && value !== '')
                 .join(', ') || '—'}
-              {field.unitCode ? ` ${field.unitCode}` : ''}
+              {field.unitSymbol ? ` ${field.unitSymbol}` : ''}
             </dd>
           </Typography>
         </div>

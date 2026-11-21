@@ -15,6 +15,7 @@ describe('Property catalogue through HTTP transport', () => {
     kind: 'TEXT',
     description: null,
     unitCode: null,
+    unit: null,
     version: 1,
     options: [],
     createdAt: '2026-11-20T12:00:00.000Z',

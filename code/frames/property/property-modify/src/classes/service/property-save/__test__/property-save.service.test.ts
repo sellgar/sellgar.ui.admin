@@ -10,6 +10,7 @@ const snapshot = (version: number, codes: string[]) =>
     name: 'Цвет',
     kind: 'OPTIONS',
     unitCode: null,
+    unit: null,
     description: 'Описание',
     version,
     options: codes.map((code, sortOrder) => ({ code, name: code, sortOrder, extras: [] })),

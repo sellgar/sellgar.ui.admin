@@ -110,7 +110,7 @@ export const ValueFactory: React.FC<IProps> = (props) => {
         <Field>
           <Field.Content>
             <Input
-              badge={props.property.unitCode ? <Badge label={props.property.unitCode} /> : undefined}
+              badge={props.property.unitSymbol ? <Badge label={props.property.unitSymbol} /> : undefined}
               name={field.name}
               ref={field.ref}
               type={

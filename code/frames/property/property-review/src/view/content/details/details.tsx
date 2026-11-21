@@ -61,7 +61,7 @@ export const Details: React.FC = () => {
           }
           value={
             <Typography size={'caption-m'} weight={'regular'}>
-              <p className={s.value}>{data.unitCode || 'Без размерности'}</p>
+              <p className={s.value}>{data.unit ? `${data.unit.name} (${data.unit.symbol})` : 'Без размерности'}</p>
             </Typography>
           }
         />

@@ -1,6 +1,17 @@
 import { Entity } from '@sellgar/app';
 import { Expose, Type } from 'class-transformer';
-import { IsArray, IsDateString, IsEnum, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
+
+import { UnitEntity } from '../../unit';
 
 import { PropertyOptionEntity } from './property-option.entity.ts';
 import { PropertyKind } from './property-kind.enum.ts';
@@ -28,6 +39,12 @@ export class PropertyEntity {
   @IsOptional()
   @IsString()
   unitCode: string | null;
+
+  @Expose()
+  @ValidateIf((_object, value) => value !== null)
+  @ValidateNested()
+  @Type(() => UnitEntity)
+  unit: UnitEntity | null;
 
   @Expose()
   @IsInt()

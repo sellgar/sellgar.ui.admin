@@ -16,9 +16,9 @@ const NameComponent: React.FC<IProps> = (props) => {
       <Typography size={'caption-l'} weight={'semi-bold'}>
         <p className={s.name}>{props.property.name}</p>
       </Typography>
-      {props.property.unitCode ? (
+      {props.property.unit ? (
         <Typography size={'caption-m'} weight={'semi-bold'}>
-          <p className={s.unit}>[{props.property.unitCode}]</p>
+          <p className={s.unit}>[{props.property.unit.symbol}]</p>
         </Typography>
       ) : null}
     </div>

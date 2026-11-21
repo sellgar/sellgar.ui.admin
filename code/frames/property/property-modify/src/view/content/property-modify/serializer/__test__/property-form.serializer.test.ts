@@ -11,6 +11,7 @@ describe('Property form mapping', () => {
       name: 'Цвет',
       kind: 'OPTIONS',
       unitCode: null,
+      unit: null,
       description: 'Строка 1\nСтрока 2',
       version: 2,
       options: [
