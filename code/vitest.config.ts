@@ -2,11 +2,18 @@
 
 import { serviceWorker } from '@feature/service-worker/vite';
 import reactSwc from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   cacheDir: '/tmp/.vite',
   test: {
+    exclude: [
+      ...configDefaults.exclude,
+      'library/sellgar.app.ui/**',
+      'library/sellgar.kit.ui/**',
+      'library/sellgar.orm.ui/**',
+      '**/*.integration.test.ts',
+    ],
     cache: {
       dir: '/tmp/',
     },

@@ -52,6 +52,7 @@ const createController = () => {
           uuid: `00000000-0000-4000-8000-00000000001${number}`,
           offerUuid,
           article: `SKU-${number}`,
+          order: number - 1,
           version: 1,
           clarifications: [{ position: 0, value: number === 1 ? 'S евростандарт' : 'L евростандарт' }],
           inventory: {
