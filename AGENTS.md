@@ -13,7 +13,7 @@
 - Helm values: `helm/values.app.yaml`, `helm/dev/values.yaml`, `helm/prod/values.yaml`.
   Общий chart находится в `sellgar.infrastructure/charts/application`.
   Не создавать собственные Kubernetes templates или каталог `deploy/` в админке.
-  ConfigMap с `config.js` описывается в `configmaps` values соответствующей среды.
+  ConfigMap с `config.js` описывается в `environmentFile` values соответствующей среды.
 - Документация и Git-конфигурация остаются в корне.
 
 ## Кратко
@@ -103,3 +103,9 @@
 - Для собственных компонентов использовать CSS Modules (`*.module.css`) и нативные возможности CSS. SCSS допустим только при необходимой Sass-логике; Sass-переменные не использовать. Дизайн-значения берутся из CSS custom properties кита.
 
 - Цена редактируется в каждой учётной записи склада (`records[].currentPrice`); общей формы цены оффера нет. История принадлежит записи. Таблица связи использует готовый priceRange от Store, просмотр учёток показывает точную цену каждой записи.
+
+## Контракт CI/CD
+
+- Отдельный Docker target `tests` и job `test` обязательны; деплой зависит от успешных тестов.
+- Миграционного образа и job нет.
+- CI/CD и конфигурация описаны в разделе «CI и доставка» README. Python/smoke wrappers удалены; команды Helm/kubectl видны в общих workflows.

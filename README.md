@@ -7,7 +7,7 @@
 - `code/` — Yarn workspaces, исходники и инструменты разработки.
 - `code/clients/admin/nginx/` — `nginx.conf` и `conf.d/default.conf`.
 - `Dockerfile` и `.dockerignore` — контейнерная сборка из корня репозитория.
-- `.github/workflows/ci.yml` — сборка образа, smoke-проверка и публикация в GHCR.
+- `.github/workflows/ci.yml` — сборка и публикация, отдельные тесты и Helm-деплой в dev.
 - `.github/workflows/production.yml` — ручная подготовка production-выпуска без пересборки.
 - `helm/values.app.yaml` — общие настройки запуска: порт, volumes, probes, ingress path.
 - `helm/dev/values.yaml`, `helm/prod/values.yaml` — настройки сред и ConfigMap с `config.js`.
@@ -68,66 +68,30 @@ yarn test
 - `docs/design` - процесс проектирования изменений.
 - `docs/agent` - инструкции для агентской работы.
 
-## Контейнер и CI
+## CI и доставка
 
-Из корня репозитория:
+Push в `development` запускает build → publish → test → deploy.
+`test` — отдельная job с unit/компонентными тестами из Docker target `tests`.
+Если тесты не прошли, deploy не запускается.
+Сборка, тесты и публикация выполняются на GitHub-hosted runners;
+deploy — на repository-scoped runner в dev VM.
+Обычная раскатка выполняется Helm с ожиданием готовности и проверкой image digest.
+Argo CD продолжает управлять платформой, но не этим приложением.
 
-```bash
-docker build -t sellgar-admin-ui:local .
-docker run --rm -p 127.0.0.1:8080:8080 sellgar-admin-ui:local
-```
+Docker targets: `application`, `tests`.
+Миграционного образа и миграционной job у этого приложения нет.
 
-Контейнер обслуживает корень отдельного домена. Браузерные маршруты, assets
-и service worker используют `/`; область действия worker — весь admin origin.
-Локальный Vite dev server продолжает работать от `/` на порту 3000.
+Настройки среды хранятся в `helm/dev/values.yaml`, Secret refs — в
+`helm/values.app.yaml`. Версионный immutable ConfigMap монтируется через
+`environmentFile`; значения credentials не передаются в GitHub-hosted jobs или Git.
+Внутренний HTTP-порт — 8080, в dev одна реплика.
 
-Образ собирается на Node 24 и обслуживается Nginx 1.30.7 без root.
-SPA routes возвращают `index.html`; `config.js` и service worker не сохраняются
-в HTTP-кеше, assets с хешами получают длительный cache lifetime.
+PR запускает build/test без публикации и деплоя. Push в `release/*` публикует
+кандидат с `release.json`; ручной production workflow из `master` принимает
+`candidate-<run-number>.<attempt>`, проверяет успешный исходный CI и идентичность
+дерева, продвигает те же digest без пересборки. Production ещё не подготовлен:
+нужны его values, Secrets, runner и GitHub environment protections.
+Откат миграций в эту схему не включён.
 
-Для закрытых submodules workflow требует GitHub Actions Secret
-`SUBMODULES_READ_TOKEN` с доступом на чтение вложенных репозиториев.
-Для доступных через штатный `GITHUB_TOKEN` репозиториев отдельный Secret не нужен.
-Перед CI необходимо зафиксировать и опубликовать изменения каждого вложенного
-репозитория, затем gitlinks родительского приложения. Checkout использует
-зафиксированные commits submodules, а не последние commits их веток.
-
-Цикл разработки: `development → release/<version> → master → development`.
-
-| Событие                                              | Результат                                                                        |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Push в `development`                                 | build → smoke → publish → Helm-пакет → автоматическая синхронизация Argo CD                                   |
-| Push в `release/*`                                   | build → smoke → publish, запись кандидата для stage/prod                         |
-| PR в `development`, `release/*`, `master`            | Проверки без публикации                                                          |
-| Слияние релиза в `master`                            | Автоматического production-выпуска нет                                           |
-| `Release to production` → `Run workflow` из `master` | Проверка кандидата, smoke digest, публикация prod Helm-пакета и обратный PR |
-
-Для ручного выпуска указывается ID успешной релизной сборки из её Summary.
-Повторной сборки образа нет: результатом становится тот же digest и Artifact
-`production-release` с `release.json` и `image-values.yaml` для deployment.
-После публикации пакета открывается PR `master → development`; ветки
-и автоматическое слияние workflow не создаёт.
-
-Операционные инструкции, GitHub permissions и точки подключения Kubernetes:
-[цикл CI и выпуска](docs/ci-release-cycle.md).
-
-Локально ту же smoke-проверку можно выполнить из корня репозитория:
-
-```bash
-python3 .github/scripts/smoke-image.py sellgar-admin-ui:local
-python3 -B -m unittest discover -s .github/scripts -p 'test_*.py'
-```
-
-Сборка образа не зависит от среды. После smoke и публикации CI создаёт Helm-пакет
-с проверенным image digest и публичной конфигурацией выбранной среды. Dev-пакет
-публикуется автоматически; prod-пакет — только ручным workflow после проверки кандидата.
-Argo CD забирает новые версии пакетов из GHCR. CI не обращается к Kubernetes и
-не изменяет инфраструктурный Git при каждом выпуске.
-
-Общие values лежат в `helm/values.app.yaml`, параметры и ConfigMap среды — в
-`helm/dev/values.yaml` и `helm/prod/values.yaml`. Общий chart включается в пакет
-из закреплённой версии delivery action. Изменение ConfigMap вызывает rolling update.
-`config.js` содержит только публичные настройки браузера; секреты в него не передаются.
-
-Целевой адрес dev — `https://admin.dev.sellgar.ru/`. Prod ingress отключён до настройки домена,
-TLS и самой production-среды. Публикация prod-пакета сама по себе не создаёт эту среду.
+Общие workflows закреплены тегом `delivery-v0.6.0` в `sellgar.infrastructure`.
+Порядок установки runner и передачи управления: [доставка приложений](https://github.com/pyatakovvg/sellgar.infrastructure/blob/development/docs/application-delivery.md).

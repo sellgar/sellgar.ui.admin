@@ -1,36 +1,22 @@
 image:
-  repository: ghcr.io/pyatakovvg/sellgar.ui.admin
-
+  repository: ghcr.io/sellgar/sellgar.ui.admin
 env: {}
-
 applicationPort: 8080
-
 podSecurityContext:
   runAsUser: 101
   runAsGroup: 101
   fsGroup: 101
-
 volumeMounts:
-  - mountPath: /tmp
-    name: cache-volume
-  - mountPath: /usr/share/nginx/html/config.js
-    name: config-js
-    subPath: config.js
-    readOnly: true
-
+- mountPath: /tmp
+  name: cache-volume
 volumes:
-  - name: cache-volume
-    emptyDir:
-      sizeLimit: 64Mi
-  - name: config-js
-    configMap:
-      name: admin-ui-config
-
+- name: cache-volume
+  emptyDir:
+    sizeLimit: 64Mi
 ingress:
   enabled: true
   className: traefik
   path: /
-
 probes:
   startup:
     httpGet:
@@ -48,7 +34,6 @@ probes:
       path: /healthz
       port: http
     periodSeconds: 10
-
 resources:
   requests:
     cpu: 50m
@@ -56,3 +41,7 @@ resources:
   limits:
     cpu: 500m
     memory: 128Mi
+environmentFile:
+  enabled: true
+  filename: config.js
+  mountPath: /usr/share/nginx/html/config.js

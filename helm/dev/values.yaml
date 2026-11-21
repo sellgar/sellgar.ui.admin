@@ -1,17 +1,12 @@
 replicas: 1
-
 ingress:
   host: admin.dev.sellgar.ru
   tlsSecretName: sellgar-dev-tls
-
-configmaps:
-  - nameOverride: admin-ui-config
-    enabled: true
-    filename: config.js
-    data: |
-      window.env = {
-        NODE_ENV: 'production',
-        GATEWAY_API: 'https://admin.dev.sellgar.ru/api/admin',
-        SOCKET_GATEWAY_API: 'https://dev.sellgar.ru',
-        CDN_IMAGES_URL: 'https://cdn.dev.sellgar.ru/images',
-      };
+environmentFile:
+  data: |
+    window.env = {
+      NODE_ENV: 'production',
+      GATEWAY_API: 'https://admin.dev.sellgar.ru/api/admin',
+      SOCKET_GATEWAY_API: 'https://dev.sellgar.ru',
+      CDN_IMAGES_URL: 'https://cdn.dev.sellgar.ru/images',
+    };
