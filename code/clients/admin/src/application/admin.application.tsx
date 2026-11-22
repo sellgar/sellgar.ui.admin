@@ -20,7 +20,7 @@ import { Splash } from './components/splash';
 import { AdminBindings } from './bindings';
 import { ResolveAuthStateInitializer } from './initializers';
 import { ServiceWorkerNotificationView } from './presentations/service-worker';
-import { AlertUserRequestView } from './presentations/user-request';
+import { AlertUserRequestView, ConfirmUserRequestView } from './presentations/user-request';
 import { NavigationBlockerView } from './presentations/navigation-blocker';
 import { createAdminRouter } from './routes';
 import { DrawerShell } from './shells/drawer';
@@ -53,6 +53,7 @@ export class AdminApplication extends Application {
       UserRequestFeature.configure({
         presentation: UserRequestPresentation.define((registry) => {
           registry.alert(AlertUserRequestView);
+          registry.confirm(ConfirmUserRequestView);
         }),
       }),
     ]);

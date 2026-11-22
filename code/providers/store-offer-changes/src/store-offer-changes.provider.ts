@@ -1,12 +1,10 @@
-import { StoreProductEntity } from '@library/domain';
 import { SocketIOBindings } from '@library/socket-io';
 import {
   Inject,
   Provider,
   type ProviderInterface,
   type ProviderResult,
-  insertEntity,
-  updateEntity,
+  RevalidateServiceInterface,
   UseBindings,
 } from '@sellgar/app';
 
@@ -19,16 +17,13 @@ export class StoreOfferChangesProvider implements ProviderInterface {
   constructor(
     @Inject(StoreOfferChangesHubInterface)
     private readonly hub: StoreOfferChangesHubInterface,
+    @Inject(RevalidateServiceInterface) private readonly revalidateService: RevalidateServiceInterface,
   ) {}
 
   activate(): ProviderResult {
     return this.hub.subscribe({
-      created: async (payload) => {
-        insertEntity(StoreProductEntity, payload, { position: 'start' });
-      },
-      updated: async (payload) => {
-        updateEntity(StoreProductEntity, payload);
-      },
+      created: () => this.revalidateService.revalidate(),
+      updated: () => this.revalidateService.revalidate(),
     });
   }
 

@@ -19,6 +19,7 @@ import { ProductDtoMapper } from './mapper/product-dto.mapper.ts';
 import { ProductGatewayInterface } from './product-gateway.interface.ts';
 import { ProductQueryDto } from './dto/product-query.dto.ts';
 import type { ProductQueryInput } from './input/product-query.input.ts';
+import { ProductArchiveImpactEntity } from '../../domain/product-archive-impact.entity.ts';
 
 @Injectable()
 export class ProductGateway implements ProductGatewayInterface {
@@ -28,6 +29,30 @@ export class ProductGateway implements ProductGatewayInterface {
     @Inject(RequestExecutorInterface) private readonly requestExecutor: RequestExecutorInterface,
     @Inject(ProductFormDataFactoryInterface) private readonly formDataFactory: ProductFormDataFactoryInterface,
   ) {}
+
+  async archiveImpact(uuid: string, variantUuid?: string): Promise<ProductArchiveImpactEntity> {
+    const path = variantUuid
+      ? `/v2/products/${uuid}/variants/${variantUuid}/archive-impact`
+      : `/v2/products/${uuid}/archive-impact`;
+    const result = await this.requestExecutor.run(
+      { scope: `product:archive-impact:${variantUuid ?? uuid}` },
+      ({ signal }) => {
+        const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
+        return request.get(this.config.get('GATEWAY_API') + path);
+      },
+    );
+    const entity = plainToInstance(ProductArchiveImpactEntity, result);
+    await validateOrReject(entity);
+    return entity;
+  }
+
+  async archive(uuid: string, version: number): Promise<ProductEntity> {
+    const result = await this.requestExecutor.run({ scope: `product:archive:${uuid}` }, ({ signal }) => {
+      const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
+      return request.patch(this.config.get('GATEWAY_API') + `/v2/products/${uuid}/archive`, { version });
+    });
+    return this.toProduct(result);
+  }
 
   async findAll(query: ProductQueryInput = {}): Promise<ProductResultEntity> {
     const queryDto = plainToInstance(ProductQueryDto, query, { excludeExtraneousValues: true });

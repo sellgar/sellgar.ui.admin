@@ -9,7 +9,7 @@ import {
 import { StoreOfferChangesHub } from '../store-offer-changes.hub.ts';
 
 describe('StoreOfferChangesHub', () => {
-  it.each(['created', 'updated'] as const)(
+  it.each(['created', 'updated', 'archived'] as const)(
     'subscribes to store.product.%s and validates its payload',
     async (change) => {
       const fixture = createFixture();
@@ -33,8 +33,9 @@ describe('StoreOfferChangesHub', () => {
         `store.product.${change}`,
         expect.any(Function),
       );
-      expect(listener[change]).toHaveBeenCalledWith(expect.any(StoreProductEntity));
-      expect(listener[change]).toHaveBeenCalledWith(
+      const handler = change === 'created' ? listener.created : listener.updated;
+      expect(handler).toHaveBeenCalledWith(expect.any(StoreProductEntity));
+      expect(handler).toHaveBeenCalledWith(
         expect.objectContaining({
           uuid: '5b7e713c-f6c6-4450-b1dc-767a7458bf55',
           version: 8,
@@ -43,14 +44,14 @@ describe('StoreOfferChangesHub', () => {
     },
   );
 
-  it('disposes both delivery subscriptions', async () => {
+  it('disposes every delivery subscription', async () => {
     const fixture = createFixture();
     const hub = new StoreOfferChangesHub(fixture.config, fixture.auth, fixture.connections);
     const dispose = hub.subscribe({ created: vi.fn(), updated: vi.fn() });
 
     await dispose();
 
-    expect(fixture.disposals).toHaveLength(2);
+    expect(fixture.disposals).toHaveLength(3);
     for (const subscriptionDispose of fixture.disposals) {
       expect(subscriptionDispose).toHaveBeenCalledOnce();
     }

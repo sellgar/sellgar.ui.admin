@@ -23,9 +23,7 @@ export class ProductController implements ProductControllerInterface {
 
     if (uuid && version !== undefined) {
       const result = await this.productService.update(uuid, ProductFormMapper.toUpdateInput(args.payload, version));
-      await this.blocker.allow(() =>
-        this.navigateService.to(ProductReviewRoute, { params: { uuid: result.uuid }, revalidate: false }),
-      );
+      await this.blocker.allow(() => this.navigateService.to(ProductReviewRoute, { params: { uuid: result.uuid } }));
       return result;
     }
 

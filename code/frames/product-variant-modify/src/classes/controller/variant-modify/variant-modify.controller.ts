@@ -1,7 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import {
-  ProductEntity,
   ProductFieldEntity,
   ProductServiceInterface,
   ProductTypeServiceInterface,
@@ -12,7 +11,7 @@ import {
   Inject,
   NavigateServiceInterface,
   NavigationBlockerServiceInterface,
-  updateEntity,
+  RevalidateServiceInterface,
 } from '@sellgar/app';
 
 import { VariantFormMapper } from './mapper/variant-form.mapper.ts';
@@ -27,6 +26,7 @@ export class VariantModifyController implements VariantModifyControllerInterface
     @Inject(FileServiceInterface) private readonly files: FileServiceInterface,
     @Inject(NavigateServiceInterface) private readonly navigate: NavigateServiceInterface,
     @Inject(NavigationBlockerServiceInterface) private readonly blocker: NavigationBlockerServiceInterface,
+    @Inject(RevalidateServiceInterface) private readonly revalidateService: RevalidateServiceInterface,
   ) {}
 
   async loader(args: Parameters<VariantModifyControllerInterface['loader']>[0]) {
@@ -60,7 +60,7 @@ export class VariantModifyController implements VariantModifyControllerInterface
   async action(args: Parameters<VariantModifyControllerInterface['action']>[0]): Promise<void> {
     const input = args.payload;
     const variant = VariantFormMapper.toVariantInput(input);
-    const result = args.params.variantUuid
+    await (args.params.variantUuid
       ? await this.products.updateVariant(args.params.productUuid, args.params.variantUuid, {
           ...variant,
           version: input.version,
@@ -70,8 +70,8 @@ export class VariantModifyController implements VariantModifyControllerInterface
           version: input.version,
           typeVersion: input.typeVersion,
           variant,
-        });
-    updateEntity(ProductEntity, result);
+        }));
     await this.blocker.allow(() => this.navigate.close());
+    await this.revalidateService.revalidate();
   }
 }

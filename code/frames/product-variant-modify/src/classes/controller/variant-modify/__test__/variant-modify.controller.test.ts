@@ -4,7 +4,11 @@ import type {
   ProductServiceInterface,
   ProductTypeServiceInterface,
 } from '@library/domain';
-import type { NavigateServiceInterface, NavigationBlockerServiceInterface } from '@sellgar/app';
+import type {
+  NavigateServiceInterface,
+  NavigationBlockerServiceInterface,
+  RevalidateServiceInterface,
+} from '@sellgar/app';
 import { describe, expect, it, vi } from 'vitest';
 
 import { VariantModifyController } from '../variant-modify.controller.ts';
@@ -28,7 +32,9 @@ const createFixture = () => {
     allow: vi.fn((callback: () => unknown) => callback()),
   } as unknown as NavigationBlockerServiceInterface;
   return {
-    controller: new VariantModifyController(products, types, files, navigate, blocker),
+    controller: new VariantModifyController(products, types, files, navigate, blocker, {
+      revalidate: vi.fn(),
+    } as unknown as RevalidateServiceInterface),
     products,
     navigate,
     types,

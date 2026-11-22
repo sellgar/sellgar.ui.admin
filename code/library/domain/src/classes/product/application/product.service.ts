@@ -9,10 +9,19 @@ import { UpdateVariantInput } from '../data/gateway/input/update-variant.input.t
 import { ProductEntity } from '../domain/product.entity.ts';
 import { ProductResultEntity } from '../domain/product-result.entity.ts';
 import type { ProductQueryInput } from '../data/gateway/input/product-query.input.ts';
+import { ProductArchiveImpactEntity } from '../domain/product-archive-impact.entity.ts';
 
 @Injectable()
 export class ProductService implements ProductServiceInterface {
   constructor(@Inject(ProductGatewayInterface) private readonly productGateway: ProductGatewayInterface) {}
+
+  archiveImpact(uuid: string, variantUuid?: string): Promise<ProductArchiveImpactEntity> {
+    return this.productGateway.archiveImpact(uuid, variantUuid);
+  }
+
+  archive(uuid: string, version: number): Promise<ProductEntity> {
+    return this.productGateway.archive(uuid, version);
+  }
 
   findAll(query?: ProductQueryInput): Promise<ProductResultEntity> {
     return this.productGateway.findAll(query);

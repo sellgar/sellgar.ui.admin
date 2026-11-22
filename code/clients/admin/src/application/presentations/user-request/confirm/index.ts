@@ -1,0 +1,1 @@
+export { ConfirmUserRequestView } from './confirm';

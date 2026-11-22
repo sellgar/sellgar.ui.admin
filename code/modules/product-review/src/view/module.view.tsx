@@ -12,13 +12,22 @@ import s from './default.module.css';
 const ModuleViewComponent: React.FC = () => {
   const product = App.useLoaderData(ProductReviewControllerInterface);
   const controller = App.useController(ProductReviewControllerInterface);
+  const submit = App.useSubmit(ProductReviewControllerInterface);
 
   return (
     <Page>
       <Page.Header>
         <Page.Header.Title>{product.name}</Page.Header.Title>
         <Page.Header.Controls>
-          <Button style={'secondary'} onClick={() => void controller.edit(product.uuid)}>
+          <Button
+            style={'secondary'}
+            target={'destructive'}
+            inProcess={submit.inProcess}
+            onClick={() => void submit(product)}
+          >
+            Архивировать
+          </Button>
+          <Button style={'secondary'} disabled={submit.inProcess} onClick={() => void controller.edit(product.uuid)}>
             Редактировать
           </Button>
         </Page.Header.Controls>

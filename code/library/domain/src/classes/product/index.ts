@@ -1,4 +1,5 @@
 export { ProductEntity } from './domain/product.entity.ts';
+export { ProductArchiveImpactEntity } from './domain/product-archive-impact.entity.ts';
 export { ProductFieldEntity } from './domain/product-field.entity.ts';
 export { ProductVariantEntity } from './domain/product-variant.entity.ts';
 export { ProductSummaryEntity } from './domain/product-summary.entity.ts';

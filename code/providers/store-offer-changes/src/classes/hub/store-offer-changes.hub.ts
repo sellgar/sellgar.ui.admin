@@ -40,9 +40,12 @@ export class StoreOfferChangesHub implements StoreOfferChangesHubInterface {
     const updated = this.connection.subscribeDelivery('store.product.updated', async (value) => {
       await this.deliver(value, listener.updated);
     });
+    const archived = this.connection.subscribeDelivery('store.product.archived', async (value) => {
+      await this.deliver(value, listener.updated);
+    });
 
     return async () => {
-      await Promise.all([created.dispose(), updated.dispose()]);
+      await Promise.all([created.dispose(), updated.dispose(), archived.dispose()]);
     };
   }
 

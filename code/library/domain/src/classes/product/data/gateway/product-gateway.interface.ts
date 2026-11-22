@@ -8,8 +8,11 @@ import { UpdateVariantInput } from './input/update-variant.input.ts';
 import { ProductEntity } from '../../domain/product.entity.ts';
 import { ProductResultEntity } from '../../domain/product-result.entity.ts';
 import type { ProductQueryInput } from './input/product-query.input.ts';
+import { ProductArchiveImpactEntity } from '../../domain/product-archive-impact.entity.ts';
 
 export abstract class ProductGatewayInterface {
+  abstract archiveImpact(uuid: string, variantUuid?: string): Promise<ProductArchiveImpactEntity>;
+  abstract archive(uuid: string, version: number): Promise<ProductEntity>;
   abstract findAll(query?: ProductQueryInput): Promise<ProductResultEntity>;
   abstract findByUuid(uuid: string): Promise<ProductEntity>;
   abstract findVariants(uuid: string): Promise<ProductVariantListEntity>;
