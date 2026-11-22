@@ -24,9 +24,7 @@ export const StoreModify: React.FC = () => {
       return undefined;
     }
 
-    const variants = context.product.variants
-      .filter((variant) => variant.status === 'active')
-      .map((variant) => ({ uuid: variant.uuid, name: variant.name }));
+    const variants = context.product.variants.map((variant) => ({ uuid: variant.uuid, name: variant.name }));
 
     return {
       uuid: data.productUuid,

@@ -17,15 +17,13 @@ const NameComponent: React.FC<IProps> = (props) => {
         <p className={s.name}>{props.product.name}</p>
       </Typography>
       <div className={s.variants}>
-        {props.product.variants
-          .filter((variant) => variant.status !== 'archived')
-          .map((variant) => (
-            <div key={variant.uuid} className={s.variant}>
-              <Typography size={'caption-m'} weight={'medium'}>
-                <p>{variant.name}</p>
-              </Typography>
-            </div>
-          ))}
+        {props.product.variants.map((variant) => (
+          <div key={variant.uuid} className={s.variant}>
+            <Typography size={'caption-m'} weight={'medium'}>
+              <p>{variant.name}</p>
+            </Typography>
+          </div>
+        ))}
       </div>
     </div>
   );

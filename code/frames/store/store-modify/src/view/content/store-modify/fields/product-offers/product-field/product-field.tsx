@@ -25,9 +25,7 @@ const ProductFieldComponent: React.FC<IProps> = (props) => {
       .map((item) => ({
         uuid: item.uuid,
         name: item.name,
-        variants: item.variants
-          .filter((variant) => variant.status === 'active')
-          .map((variant) => ({ uuid: variant.uuid, name: variant.name })),
+        variants: item.variants.map((variant) => ({ uuid: variant.uuid, name: variant.name })),
       })),
   ];
 

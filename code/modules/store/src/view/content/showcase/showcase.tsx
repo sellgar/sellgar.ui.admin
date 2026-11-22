@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const ShowcaseComponent: React.FC<IProps> = (props) => {
-  const offers = props.product.offers.filter((offer) => offer.variantSnapshot?.status !== 'archived');
+  const offers = props.product.offers;
   const totalOffers = offers.length;
   const configuredOffers = offers.filter((offer) => offer.showing).length;
   const visibleOffers = props.product.showing ? configuredOffers : 0;
