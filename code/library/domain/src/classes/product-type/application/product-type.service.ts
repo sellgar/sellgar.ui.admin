@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@sellgar/app';
 
+import { collectCursorPages } from '../../../infrastructure/pagination/collect-cursor-pages.ts';
 import { ProductTypeGatewayInterface } from '../data/gateway/product-type-gateway.interface.ts';
 import { ProductTypeEntity } from '../domain/product-type.entity.ts';
 import { ProductTypeResultEntity } from '../domain/product-type-result.entity.ts';
@@ -11,8 +12,12 @@ import type { UpdateProductTypeInput } from '../data/gateway/input/update-produc
 export class ProductTypeService implements ProductTypeServiceInterface {
   constructor(@Inject(ProductTypeGatewayInterface) private readonly gateway: ProductTypeGatewayInterface) {}
 
-  findAll(): Promise<ProductTypeResultEntity> {
-    return this.gateway.findAll();
+  getCatalogue(): Promise<ProductTypeEntity[]> {
+    return collectCursorPages((nextToken) => this.gateway.findAll(100, nextToken));
+  }
+
+  findAll(limit?: number, nextToken?: string): Promise<ProductTypeResultEntity> {
+    return this.gateway.findAll(limit, nextToken);
   }
 
   findByUuid(uuid: string): Promise<ProductTypeEntity> {

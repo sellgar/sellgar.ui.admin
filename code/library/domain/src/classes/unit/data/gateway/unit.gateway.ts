@@ -2,6 +2,7 @@ import { Inject, Injectable, RequestExecutorInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 
+import { UnitQueryDto } from './dto/unit-query.dto.ts';
 import { ConfigInterface } from '../../../../infrastructure/config/config.interface.ts';
 import { DeviceServiceInterface } from '../../../../infrastructure/device/service/device-service.interface.ts';
 import { HttpRequest } from '../../../../infrastructure/http-client';
@@ -49,10 +50,12 @@ export class UnitGateway implements UnitGatewayInterface {
     return this.toUnit(result);
   }
 
-  async findAll(): Promise<UnitResultEntity> {
+  async findAll(limit?: number, nextToken?: string): Promise<UnitResultEntity> {
+    const dto = plainToInstance(UnitQueryDto, { limit, nextToken });
+    await validateOrReject(dto);
     const result = await this.requestExecutor.run({ scope: 'units:list' }, ({ signal }) => {
       const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
-      return request.get(this.config.get('GATEWAY_API') + '/v2/units');
+      return request.get(this.config.get('GATEWAY_API') + '/v2/units', { params: dto });
     });
     const entity = plainToInstance(UnitResultEntity, result);
     await validateOrReject(entity);

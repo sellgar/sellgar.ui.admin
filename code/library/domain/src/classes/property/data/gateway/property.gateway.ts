@@ -2,6 +2,7 @@ import { Inject, Injectable, RequestExecutorInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 
+import { PropertyQueryDto } from './dto/property-query.dto.ts';
 import { ConfigInterface } from '../../../../infrastructure/config/config.interface.ts';
 import { DeviceServiceInterface } from '../../../../infrastructure/device/service/device-service.interface.ts';
 import { HttpRequest } from '../../../../infrastructure/http-client';
@@ -54,31 +55,16 @@ export class PropertyGateway implements PropertyGatewayInterface {
     return this.toProperty(result);
   }
 
-  async findAll(): Promise<PropertyResultEntity> {
-    return this.requestExecutor.run({ scope: 'properties:list' }, async ({ signal }) => {
+  async findAll(limit?: number, nextToken?: string): Promise<PropertyResultEntity> {
+    const dto = plainToInstance(PropertyQueryDto, { limit, nextToken });
+    await validateOrReject(dto);
+    const response = await this.requestExecutor.run({ scope: 'properties:list' }, ({ signal }) => {
       const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
-      const items: PropertyEntity[] = [];
-      let offset = 0;
-      let total: number;
-
-      do {
-        const response = await request.get(this.config.get('GATEWAY_API') + '/v2/properties', {
-          params: { offset },
-        });
-        const page = plainToInstance(PropertyResultEntity, response);
-        await validateOrReject(page);
-
-        if (page.limit <= 0 || (page.items.length === 0 && offset < page.total)) {
-          throw new Error('Property catalogue pagination did not advance.');
-        }
-
-        items.push(...page.items);
-        total = page.total;
-        offset += page.limit;
-      } while (offset < total);
-
-      return plainToInstance(PropertyResultEntity, { items, total, limit: items.length, offset: 0 });
+      return request.get(this.config.get('GATEWAY_API') + '/v2/properties', { params: dto });
     });
+    const page = plainToInstance(PropertyResultEntity, response);
+    await validateOrReject(page);
+    return page;
   }
 
   async createOption(code: string, version: number, option: PropertyOptionInput): Promise<PropertyEntity> {

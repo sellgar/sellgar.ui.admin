@@ -13,6 +13,7 @@ import { Description } from './description';
 import s from './default.module.css';
 
 const TableView: React.FC = () => {
+  const controller = App.useController(UnitControllerInterface);
   const units = App.useLoaderData(UnitControllerInterface);
   const navigate = App.useNavigate();
   const revalidate = App.useRevalidate();
@@ -21,6 +22,11 @@ const TableView: React.FC = () => {
     <div className={s.wrapper}>
       <TableComponent
         loading={revalidate.inProcess}
+        lastRowTrigger={
+          controller.hasMore && !revalidate.inProcess && !revalidate.error
+            ? { onLastRowVisible: () => void revalidate().catch(() => undefined) }
+            : undefined
+        }
         size={'lg'}
         data={{ nodes: units.items }}
         row={{

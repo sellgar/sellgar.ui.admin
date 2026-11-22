@@ -15,7 +15,7 @@ import { StoreOfferChangesProvider } from '../store-offer-changes.provider.ts';
 
 describe('StoreOfferChangesProvider', () => {
   it('inserts a created store product into an opened empty collection', async () => {
-    const result = plainToInstance(StoreProductResultEntity, { data: [] });
+    const result = plainToInstance(StoreProductResultEntity, { items: [], meta: { limit: 50, nextToken: null } });
     const product = createStoreProduct(
       '2b2cb51c-21e4-44b5-8b8d-693aa294254f',
       1,
@@ -28,8 +28,8 @@ describe('StoreOfferChangesProvider', () => {
 
     await hub.emitCreated(product);
 
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0]?.uuid).toBe(product.uuid);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]?.uuid).toBe(product.uuid);
     await dispose();
   });
 

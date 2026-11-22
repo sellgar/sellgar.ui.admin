@@ -19,7 +19,7 @@ export class ProductQueryDto implements ProductQueryInput {
 
   @Expose()
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  offset?: number;
+  @IsString()
+  @MaxLength(8192)
+  nextToken?: string;
 }

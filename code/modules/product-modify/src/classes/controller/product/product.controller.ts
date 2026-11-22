@@ -1,9 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
-
 import { ProductServiceInterface, ProductTypeServiceInterface } from '@library/domain';
 import { ProductReviewRoute } from '@library/route-tokens';
-
 import { Controller, Inject, NavigateServiceInterface, NavigationBlockerServiceInterface } from '@sellgar/app';
 
 import { ProductModifyResultEntity } from './domain/product-modify-result.entity.ts';
@@ -42,7 +40,7 @@ export class ProductController implements ProductControllerInterface {
     const uuid = args.params.uuid;
     const [product, productTypes] = await Promise.all([
       uuid ? this.productService.findByUuid(uuid) : Promise.resolve(undefined),
-      this.productTypeService.findAll(),
+      this.productTypeService.getCatalogue(),
     ]);
     const result = plainToInstance(ProductModifyResultEntity, { product, productTypes });
 

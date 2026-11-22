@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
 import { EntityCollection } from '@sellgar/app';
-import { IsArray, IsInt, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
+import { MetaEntity } from '../../meta';
 import { BrandEntity } from './brand.entity.ts';
 
 @EntityCollection({ entity: BrandEntity, property: 'items' })
@@ -13,14 +14,8 @@ export class BrandResultEntity {
   items: BrandEntity[];
 
   @Expose()
-  @IsInt()
-  total: number;
-
-  @Expose()
-  @IsInt()
-  limit: number;
-
-  @Expose()
-  @IsInt()
-  offset: number;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MetaEntity)
+  meta: MetaEntity;
 }

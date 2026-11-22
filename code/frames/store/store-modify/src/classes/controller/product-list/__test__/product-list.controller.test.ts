@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ProductListController } from '../product-list.controller.ts';
 import { ProductSearchStore } from '../../../store/product-search/product-search.store.ts';
 
-const page: ProductResultEntity = { items: [], total: 0, limit: 20, offset: 0 };
+const page: ProductResultEntity = { items: [], meta: { limit: 20, nextToken: null } };
 
 const createFixture = () => {
   const findAll = vi.fn<(...args: Parameters<ProductServiceInterface['findAll']>) => Promise<ProductResultEntity>>();
@@ -28,7 +28,7 @@ describe('ProductListController', () => {
     findAll.mockImplementation(() => new Promise((resolve) => pending.push(resolve)));
 
     const search = controller.search(' май ');
-    expect(findAll).toHaveBeenCalledWith({ term: 'май', limit: 20, offset: 0 });
+    expect(findAll).toHaveBeenCalledWith({ term: 'май', limit: 20 });
     expect(controller.loading).toBe(true);
 
     pending[0](page);

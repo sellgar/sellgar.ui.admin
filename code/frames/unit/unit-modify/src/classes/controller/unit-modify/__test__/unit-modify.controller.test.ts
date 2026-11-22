@@ -3,6 +3,7 @@ import { UnitReviewRoute } from '@library/route-tokens';
 import type { NavigateServiceInterface, NavigationBlockerServiceInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { describe, expect, it, vi } from 'vitest';
+
 import { UnitModifyController } from '../unit-modify.controller.ts';
 
 const createController = () => {
@@ -15,7 +16,7 @@ const createController = () => {
     createdAt: '2026-10-11T00:00:00.000Z',
     updatedAt: '2026-10-11T00:00:00.000Z',
   });
-  const list = plainToInstance(UnitResultEntity, { items: [unit], total: 1, limit: 50, offset: 0 });
+  const list = plainToInstance(UnitResultEntity, { items: [unit], meta: { limit: 50, nextToken: null } });
   const unitService = {
     create: vi.fn<UnitServiceInterface['create']>().mockResolvedValue(unit),
     findByCode: vi.fn<UnitServiceInterface['findByCode']>().mockResolvedValue(unit),

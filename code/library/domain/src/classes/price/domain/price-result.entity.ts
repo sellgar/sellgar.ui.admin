@@ -1,8 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
 import { MetaEntity } from '../../meta';
-
 import { PriceEntity } from './price.entity.ts';
 
 export class PriceResultEntity {
@@ -10,9 +9,10 @@ export class PriceResultEntity {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PriceEntity)
-  data: PriceEntity[];
+  items: PriceEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
   @Type(() => MetaEntity)
   meta: MetaEntity;

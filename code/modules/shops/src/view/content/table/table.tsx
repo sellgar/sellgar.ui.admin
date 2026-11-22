@@ -12,6 +12,7 @@ import { Inn } from './inn';
 import s from './default.module.css';
 
 export const Table: React.FC = () => {
+  const controller = App.useController(ShopControllerInterface);
   const shops = App.useLoaderData(ShopControllerInterface);
   const navigate = App.useNavigate();
   const revalidate = App.useRevalidate();
@@ -20,8 +21,13 @@ export const Table: React.FC = () => {
     <div className={s.wrapper}>
       <TableComponent
         loading={revalidate.inProcess}
+        lastRowTrigger={
+          controller.hasMore && !revalidate.inProcess && !revalidate.error
+            ? { onLastRowVisible: () => void revalidate().catch(() => undefined) }
+            : undefined
+        }
         size={'lg'}
-        data={{ nodes: shops.data }}
+        data={{ nodes: shops.items }}
         row={{
           handlers: {
             click: ({ row }) => void navigate.to(Tokens.ShopReviewRoute, { params: { uuid: row.uuid } }),

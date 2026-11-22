@@ -1,14 +1,39 @@
-import { BrandServiceInterface } from '@library/domain';
+import { BrandServiceInterface, BrandResultEntity } from '@library/domain';
 
-import { Controller, Inject } from '@sellgar/app';
+import { Collector, Controller, Inject } from '@sellgar/app';
 
 import { BrandControllerInterface } from './brand-controller.interface.ts';
 
+const PAGE_LIMIT = 50;
+
 @Controller()
 export class BrandController implements BrandControllerInterface {
-  constructor(@Inject(BrandServiceInterface) private readonly brandService: BrandServiceInterface) {}
+  constructor(
+    @Inject(BrandServiceInterface) private readonly brandService: BrandServiceInterface,
+    @Inject(Collector) private readonly collector: Collector<BrandResultEntity, { nextToken: string | null }>,
+  ) {}
 
-  loader() {
-    return this.brandService.findAll();
+  get hasMore(): boolean {
+    return this.collector.state.get('nextToken') !== null;
+  }
+
+  async loader(): Promise<BrandResultEntity> {
+    const pages = await this.collector.execute(async (collection, state) => {
+      const nextToken = state.get('nextToken');
+
+      if (nextToken === null) return collection.append([]);
+
+      const page = await this.brandService.findAll(PAGE_LIMIT, nextToken);
+
+      state.set('nextToken', page.meta.nextToken);
+
+      return collection.append([page]);
+    });
+    const items = new Map(pages.flatMap((page) => page.items).map((item) => [item.code, item]));
+
+    return Object.assign(new BrandResultEntity(), {
+      items: [...items.values()],
+      meta: pages[pages.length - 1].meta,
+    });
   }
 }

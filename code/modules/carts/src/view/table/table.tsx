@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useLoaderData, useNavigate, useRevalidate } from '@sellgar/app/react';
+import { useController, useLoaderData, useNavigate, useRevalidate } from '@sellgar/app/react';
 import { Table as TableComponent } from '@sellgar/kit/table';
 
 import { CartReviewRoute } from '@library/route-tokens';
@@ -12,6 +12,7 @@ import s from './default.module.css';
 const DATE_FORMATTER = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'short' });
 
 export const Table: React.FC = () => {
+  const controller = useController(CartControllerInterface);
   const carts = useLoaderData(CartControllerInterface);
   const revalidate = useRevalidate();
   const navigate = useNavigate();
@@ -20,8 +21,13 @@ export const Table: React.FC = () => {
     <div className={s.wrapper}>
       <TableComponent
         loading={revalidate.inProcess}
+        lastRowTrigger={
+          controller.hasMore && !revalidate.inProcess && !revalidate.error
+            ? { onLastRowVisible: () => void revalidate().catch(() => undefined) }
+            : undefined
+        }
         size={'lg'}
-        data={{ nodes: carts.data }}
+        data={{ nodes: carts.items }}
         row={{ handlers: { click: ({ row }) => void navigate.to(CartReviewRoute, { params: { uuid: row.uuid } }) } }}
       >
         {({ Column }) => (
@@ -115,7 +121,7 @@ export const Table: React.FC = () => {
           </>
         )}
       </TableComponent>
-      {carts.data.length === 0 ? (
+      {carts.items.length === 0 ? (
         <p className={s.empty} role="status">
           Корзины не найдены
         </p>

@@ -21,7 +21,7 @@ export class TemplateModifyController implements TemplateModifyControllerInterfa
     const uuid = args.params.uuid;
     const [template, properties] = await Promise.all([
       uuid ? this.productTypeService.findByUuid(uuid) : Promise.resolve(undefined),
-      this.propertyService.findAll(),
+      this.propertyService.getCatalogue(),
     ]);
     const result = plainToInstance(TemplateModifyResultEntity, { template, properties });
     await validateOrReject(result);

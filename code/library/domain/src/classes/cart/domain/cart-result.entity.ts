@@ -5,13 +5,13 @@ import { EntityCollection } from '@sellgar/app';
 import { CartSummaryEntity } from './cart-summary.entity.ts';
 import { CartPageMetaEntity } from './cart-page-meta.entity.ts';
 
-@EntityCollection({ entity: CartSummaryEntity, property: 'data' })
+@EntityCollection({ entity: CartSummaryEntity, property: 'items' })
 export class CartResultEntity {
   @Expose()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CartSummaryEntity)
-  data: CartSummaryEntity[];
+  items: CartSummaryEntity[];
 
   @Expose()
   @IsDefined()

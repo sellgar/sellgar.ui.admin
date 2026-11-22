@@ -1,10 +1,11 @@
-import { BindingModuleInterface, type BindingRegistryInterface } from '@sellgar/app';
+import { BindingModuleInterface, Collector, type BindingRegistryInterface } from '@sellgar/app';
 
 import { CartController } from './controller/cart/cart.controller.ts';
 import { CartControllerInterface } from './controller/cart/cart-controller.interface.ts';
 
 export class CartsBindings implements BindingModuleInterface {
   register(registry: BindingRegistryInterface): void {
+    registry.bind(Collector).toSelf().inSingletonScope();
     registry.bind(CartControllerInterface).to(CartController);
   }
 }

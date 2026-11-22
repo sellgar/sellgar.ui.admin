@@ -2,6 +2,7 @@ import { Inject, Injectable, RequestExecutorInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 
+import { CurrencyQueryDto } from './dto/currency-query.dto.ts';
 import { ConfigInterface } from '../../../../infrastructure/config/config.interface.ts';
 import { DeviceServiceInterface } from '../../../../infrastructure/device/service/device-service.interface.ts';
 import { HttpRequest } from '../../../../infrastructure/http-client';
@@ -57,10 +58,12 @@ export class CurrencyGateway implements CurrencyGatewayInterface {
     return this.toCurrency(result);
   }
 
-  async findAll(): Promise<CurrencyResultEntity> {
+  async findAll(limit?: number, nextToken?: string): Promise<CurrencyResultEntity> {
+    const dto = plainToInstance(CurrencyQueryDto, { limit, nextToken });
+    await validateOrReject(dto);
     const result = await this.requestExecutor.run({ scope: 'currencies:list' }, ({ signal }) => {
       const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
-      return request.get(this.config.get('GATEWAY_API') + '/v2/currency');
+      return request.get(this.config.get('GATEWAY_API') + '/v2/currency', { params: dto });
     });
     const entity = plainToInstance(CurrencyResultEntity, result);
     await validateOrReject(entity);

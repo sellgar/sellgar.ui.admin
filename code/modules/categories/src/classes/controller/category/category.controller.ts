@@ -1,4 +1,4 @@
-import { CategoryServiceInterface, ShopServiceInterface, type ShopEntity } from '@library/domain';
+import { CategoryServiceInterface, ShopServiceInterface } from '@library/domain';
 import { Controller, Inject, RouteQueryServiceInterface } from '@sellgar/app';
 
 import type { CategoryControllerInterface } from './category-controller.interface.ts';
@@ -14,14 +14,7 @@ export class CategoryController implements CategoryControllerInterface {
   ) {}
 
   async loader(): Promise<CategoryPageEntity> {
-    const shops: ShopEntity[] = [];
-    let totalRows = 0;
-    do {
-      const page = await this.shops.findAll({ limit: 200, offset: shops.length });
-      shops.push(...page.data);
-      totalRows = page.meta.totalRows;
-      if (page.data.length === 0) break;
-    } while (shops.length < totalRows);
+    const shops = await this.shops.getCatalogue();
 
     const shopUuid = this.query.get(CategoryQuery).shopUuid ?? shops[0]?.uuid;
     const tree = shopUuid ? await this.categories.getTree(shopUuid) : null;

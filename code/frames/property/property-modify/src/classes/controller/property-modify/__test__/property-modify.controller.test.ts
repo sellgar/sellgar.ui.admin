@@ -8,6 +8,7 @@ import { PropertyReviewRoute } from '@library/route-tokens';
 import type { NavigateServiceInterface, NavigationBlockerServiceInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { describe, expect, it, vi } from 'vitest';
+
 import { PropertyModifyController } from '../property-modify.controller.ts';
 import { PropertySaveService } from '../../../service/property-save/property-save.service.ts';
 
@@ -24,7 +25,7 @@ const createController = () => {
     createdAt: '2026-10-11T00:00:00.000Z',
     updatedAt: '2026-10-11T00:00:00.000Z',
   });
-  const list = plainToInstance(PropertyResultEntity, { items: [property], total: 1, limit: 50, offset: 0 });
+  const list = plainToInstance(PropertyResultEntity, { items: [property], meta: { limit: 50, nextToken: null } });
   const propertyService = {
     create: vi.fn<PropertyServiceInterface['create']>().mockResolvedValue(property),
     findByCode: vi.fn<PropertyServiceInterface['findByCode']>().mockResolvedValue(property),

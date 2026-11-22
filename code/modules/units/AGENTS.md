@@ -11,3 +11,5 @@
   Resize выключен. Ячейки получают `UnitEntity` через `Cell.render`, без legacy `useCellData`.
 - Таблица и ячейки значений реактивны к изменениям `@Entity`/`@EntityCollection`.
 - Столбец описания занимает доступную ширину; ячейка сохраняет переводы строк и переносит длинные слова.
+
+- Догрузка: module-scoped singleton Collector, порции по 50, nextToken до null. Table.lastRowTrigger запускает общий useRevalidate() модуля; loading показывает штатный прогресс. Ошибка не продвигает курсор и не удаляет накопленные данные.

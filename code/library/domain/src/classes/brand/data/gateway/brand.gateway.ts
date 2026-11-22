@@ -2,6 +2,7 @@ import { Inject, Injectable, RequestExecutorInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 
+import { BrandQueryDto } from './dto/brand-query.dto.ts';
 import { ConfigInterface } from '../../../../infrastructure/config/config.interface.ts';
 import { DeviceServiceInterface } from '../../../../infrastructure/device/service/device-service.interface.ts';
 import { HttpRequest } from '../../../../infrastructure/http-client';
@@ -53,10 +54,12 @@ export class BrandGateway implements BrandGatewayInterface {
     return this.toBrand(result);
   }
 
-  async findAll(): Promise<BrandResultEntity> {
+  async findAll(limit?: number, nextToken?: string): Promise<BrandResultEntity> {
+    const dto = plainToInstance(BrandQueryDto, { limit, nextToken });
+    await validateOrReject(dto);
     const result = await this.requestExecutor.run({ scope: 'brands:list' }, ({ signal }) => {
       const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
-      return request.get(this.config.get('GATEWAY_API') + '/v2/brands');
+      return request.get(this.config.get('GATEWAY_API') + '/v2/brands', { params: dto });
     });
     const entity = plainToInstance(BrandResultEntity, result);
     await validateOrReject(entity);

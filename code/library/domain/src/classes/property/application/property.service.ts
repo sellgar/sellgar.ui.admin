@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@sellgar/app';
 
+import { collectCursorPages } from '../../../infrastructure/pagination/collect-cursor-pages.ts';
 import { PropertyServiceInterface } from './property-service.interface.ts';
 import { PropertyGatewayInterface } from '../data/gateway/property-gateway.interface.ts';
 import { CreatePropertyInput } from '../data/gateway/input/create-property.input.ts';
@@ -13,8 +14,12 @@ import { PropertyResultEntity } from '../domain/property-result.entity.ts';
 export class PropertyService implements PropertyServiceInterface {
   constructor(@Inject(PropertyGatewayInterface) private readonly propertyGateway: PropertyGatewayInterface) {}
 
-  findAll(): Promise<PropertyResultEntity> {
-    return this.propertyGateway.findAll();
+  findAll(limit?: number, nextToken?: string): Promise<PropertyResultEntity> {
+    return this.propertyGateway.findAll(limit, nextToken);
+  }
+
+  getCatalogue(): Promise<PropertyEntity[]> {
+    return collectCursorPages((nextToken) => this.propertyGateway.findAll(100, nextToken));
   }
 
   findByCode(code: string): Promise<PropertyEntity> {

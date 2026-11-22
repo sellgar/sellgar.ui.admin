@@ -16,3 +16,5 @@
 - Список использует `BrandResultEntity` с `@EntityCollection`, элементы —
   `BrandEntity` с identity `code`. Таблица и ячейки имени/описания подключены
   через `reactive`; создание/изменение бренда обновляет их без ревалидации loader.
+
+- Догрузка: module-scoped singleton Collector, порции по 50, nextToken до null. Table.lastRowTrigger запускает общий useRevalidate() модуля; loading показывает штатный прогресс. Ошибка не продвигает курсор и не удаляет накопленные данные.

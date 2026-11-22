@@ -12,6 +12,7 @@ import { Description } from './description';
 import s from './default.module.css';
 
 const TableComponentView: React.FC = () => {
+  const controller = App.useController(BrandControllerInterface);
   const brands = App.useLoaderData(BrandControllerInterface);
   const navigate = App.useNavigate();
   const revalidate = App.useRevalidate();
@@ -20,6 +21,11 @@ const TableComponentView: React.FC = () => {
     <div className={s.wrapper}>
       <TableComponent
         loading={revalidate.inProcess}
+        lastRowTrigger={
+          controller.hasMore && !revalidate.inProcess && !revalidate.error
+            ? { onLastRowVisible: () => void revalidate().catch(() => undefined) }
+            : undefined
+        }
         size={'md'}
         data={{ nodes: brands.items }}
         row={{

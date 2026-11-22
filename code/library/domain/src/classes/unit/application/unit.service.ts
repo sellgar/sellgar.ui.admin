@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@sellgar/app';
 
+import { collectCursorPages } from '../../../infrastructure/pagination/collect-cursor-pages.ts';
 import { UnitServiceInterface } from './unit-service.interface.ts';
 import { UnitGatewayInterface } from '../data/gateway/unit-gateway.interface.ts';
 import { CreateUnitInput } from '../data/gateway/input/create-unit.input.ts';
@@ -11,8 +12,12 @@ import { UnitResultEntity } from '../domain/unit-result.entity.ts';
 export class UnitService implements UnitServiceInterface {
   constructor(@Inject(UnitGatewayInterface) private readonly unitGateway: UnitGatewayInterface) {}
 
-  findAll(): Promise<UnitResultEntity> {
-    return this.unitGateway.findAll();
+  getCatalogue(): Promise<UnitEntity[]> {
+    return collectCursorPages((nextToken) => this.unitGateway.findAll(100, nextToken));
+  }
+
+  findAll(limit?: number, nextToken?: string): Promise<UnitResultEntity> {
+    return this.unitGateway.findAll(limit, nextToken);
   }
 
   findByCode(code: string): Promise<UnitEntity> {

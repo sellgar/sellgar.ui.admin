@@ -1,8 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
 import { MetaEntity } from '../../meta';
-
 import { CurrencyEntity } from './currency.entity.ts';
 
 export class CurrencyResultEntity {
@@ -10,9 +9,10 @@ export class CurrencyResultEntity {
   @Expose()
   @ValidateNested({ each: true })
   @Type(() => CurrencyEntity)
-  data: CurrencyEntity[];
+  items: CurrencyEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
   @Type(() => MetaEntity)
   meta: MetaEntity;

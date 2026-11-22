@@ -8,6 +8,6 @@ export class BrandOptionsController implements BrandOptionsControllerInterface {
   constructor(@Inject(BrandServiceInterface) private readonly brandService: BrandServiceInterface) {}
 
   loader() {
-    return this.brandService.findAll();
+    return this.brandService.getCatalogue();
   }
 }

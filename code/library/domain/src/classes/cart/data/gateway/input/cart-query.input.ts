@@ -3,5 +3,5 @@ export interface CartQueryInput {
   ownerUuid?: string;
   status?: 'active' | 'closed';
   limit?: number;
-  offset?: number;
+  nextToken?: string;
 }

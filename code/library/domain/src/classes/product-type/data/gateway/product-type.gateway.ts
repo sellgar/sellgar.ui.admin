@@ -2,6 +2,7 @@ import { Inject, Injectable, RequestExecutorInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 
+import { ProductTypeQueryDto } from './dto/product-type-query.dto.ts';
 import { ConfigInterface } from '../../../../infrastructure/config/config.interface.ts';
 import { DeviceServiceInterface } from '../../../../infrastructure/device/service/device-service.interface.ts';
 import { HttpRequest } from '../../../../infrastructure/http-client';
@@ -20,10 +21,12 @@ export class ProductTypeGateway implements ProductTypeGatewayInterface {
     @Inject(RequestExecutorInterface) private readonly requestExecutor: RequestExecutorInterface,
   ) {}
 
-  async findAll(): Promise<ProductTypeResultEntity> {
+  async findAll(limit?: number, nextToken?: string): Promise<ProductTypeResultEntity> {
+    const dto = plainToInstance(ProductTypeQueryDto, { limit, nextToken });
+    await validateOrReject(dto);
     const result = await this.requestExecutor.run({ scope: 'product-types:list' }, ({ signal }) => {
       const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });
-      return request.get(this.config.get('GATEWAY_API') + '/v2/product-types');
+      return request.get(this.config.get('GATEWAY_API') + '/v2/product-types', { params: dto });
     });
     const entity = plainToInstance(ProductTypeResultEntity, result);
     await validateOrReject(entity);

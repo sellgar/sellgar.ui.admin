@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@sellgar/app';
 
+import { collectCursorPages } from '../../../infrastructure/pagination/collect-cursor-pages.ts';
 import { ShopServiceInterface } from './shop-service.interface.ts';
 import { ShopGatewayInterface } from '../data/gateway/shop-gateway.interface.ts';
 import { CreateShopInput } from '../data/gateway/input/create-shop.input.ts';
@@ -11,6 +12,10 @@ import { ShopResultEntity } from '../domain/shop-result.entity.ts';
 @Injectable()
 export class ShopService implements ShopServiceInterface {
   constructor(@Inject(ShopGatewayInterface) private readonly shopGateway: ShopGatewayInterface) {}
+
+  getCatalogue(): Promise<ShopEntity[]> {
+    return collectCursorPages((nextToken) => this.shopGateway.findAll({ limit: 100, nextToken }));
+  }
 
   findAll(query?: ShopQueryInput): Promise<ShopResultEntity> {
     return this.shopGateway.findAll(query);
@@ -27,5 +32,4 @@ export class ShopService implements ShopServiceInterface {
   create(input: CreateShopInput): Promise<ShopEntity> {
     return this.shopGateway.create(input);
   }
-
 }

@@ -1,6 +1,5 @@
 import * as App from '@sellgar/app/react';
 import { Caption, Field, Label, Select } from '@sellgar/kit';
-
 import React from 'react';
 import * as RHF from 'react-hook-form';
 
@@ -24,7 +23,7 @@ export const Brand: React.FC = () => {
             <Select
               optionKey={'code'}
               optionValue={'name'}
-              options={brands.items}
+              options={brands}
               target={error?.message ? 'destructive' : undefined}
               value={field.value}
               onChange={field.onChange}

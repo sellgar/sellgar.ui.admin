@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsUUID, IsString, MaxLength, Max, Min } from 'class-validator';
 
 import type { CartQueryInput } from '../input/cart-query.input.ts';
 
@@ -28,8 +28,7 @@ export class CartQueryDto implements CartQueryInput {
 
   @Expose()
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(Number.MAX_SAFE_INTEGER)
-  offset?: number;
+  @IsString()
+  @MaxLength(8192)
+  nextToken?: string;
 }

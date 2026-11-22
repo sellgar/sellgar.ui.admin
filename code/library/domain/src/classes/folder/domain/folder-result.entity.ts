@@ -1,8 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
 import { MetaEntity } from '../../meta';
-
 import { FolderEntity } from './folder.entity.ts';
 
 export class FolderResultEntity {
@@ -10,9 +9,10 @@ export class FolderResultEntity {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => FolderEntity)
-  data: FolderEntity[];
+  items: FolderEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
   @Type(() => MetaEntity)
   meta: MetaEntity;

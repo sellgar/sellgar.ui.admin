@@ -3,6 +3,7 @@ import { BrandReviewRoute } from '@library/route-tokens';
 import type { NavigateServiceInterface, NavigationBlockerServiceInterface } from '@sellgar/app';
 import { plainToInstance } from 'class-transformer';
 import { describe, expect, it, vi } from 'vitest';
+
 import { BrandModifyController } from '../brand-modify.controller.ts';
 
 const createController = () => {
@@ -15,7 +16,7 @@ const createController = () => {
     createdAt: '2026-10-11T00:00:00.000Z',
     updatedAt: '2026-10-11T00:00:00.000Z',
   });
-  const list = plainToInstance(BrandResultEntity, { items: [brand], total: 1, limit: 50, offset: 0 });
+  const list = plainToInstance(BrandResultEntity, { items: [brand], meta: { limit: 50, nextToken: null } });
   const brandService = {
     create: vi.fn<BrandServiceInterface['create']>().mockResolvedValue(brand),
     findByCode: vi.fn<BrandServiceInterface['findByCode']>().mockResolvedValue(brand),

@@ -89,18 +89,24 @@ describe('Cart domain through HTTP transport', () => {
 
   it('loads a filtered, paginated summary without coercing versions', async () => {
     response = {
-      data: [{ ...metadata, shop: { uuid, name: null }, itemsCount: 2 }],
-      meta: { totalRows: 11, limit: 5, offset: 5 },
+      items: [{ ...metadata, shop: { uuid, name: null }, itemsCount: 2 }],
+      meta: { limit: 5, nextToken: 'next-page' },
     };
-    const result = await service.getAll({ shopUuid: uuid, ownerUuid, status: 'closed', limit: 5, offset: 5 });
-    expect(result.data[0]).toBeInstanceOf(CartSummaryEntity);
-    expect(result.data[0].version).toBe(metadata.version);
-    expect(result.meta).toEqual({ totalRows: 11, limit: 5, offset: 5 });
+    const result = await service.getAll({
+      shopUuid: uuid,
+      ownerUuid,
+      status: 'closed',
+      limit: 5,
+      nextToken: 'previous-page',
+    });
+    expect(result.items[0]).toBeInstanceOf(CartSummaryEntity);
+    expect(result.items[0].version).toBe(metadata.version);
+    expect(result.meta).toEqual({ limit: 5, nextToken: 'next-page' });
     expect(requests[0]).toMatchObject({
       method: 'get',
       url: 'http://localhost:4020/v1/carts',
       withCredentials: true,
-      params: { shopUuid: uuid, ownerUuid, status: 'closed', limit: 5, offset: 5 },
+      params: { shopUuid: uuid, ownerUuid, status: 'closed', limit: 5, nextToken: 'previous-page' },
     });
     expect(requests[0].headers.get('X-Device-Id')).toBe('cart-test-device');
     expect(requests[0].signal).toBeInstanceOf(AbortSignal);
@@ -229,8 +235,8 @@ describe('Cart domain through HTTP transport', () => {
   it.each([
     { limit: 0 },
     { limit: 101 },
-    { offset: -1 },
-    { offset: Number.MAX_SAFE_INTEGER + 1 },
+    { nextToken: 123 },
+    { nextToken: 'a'.repeat(8193) },
     { shopUuid: 'invalid' },
     { status: 'other' },
   ])('rejects invalid query %j before sending', async (input) => {

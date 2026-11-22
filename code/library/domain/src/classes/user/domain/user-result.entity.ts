@@ -1,8 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
 import { MetaEntity } from '../../meta';
-
 import { UserEntity } from './user.entity.ts';
 
 export class UserResultEntity {
@@ -10,9 +9,10 @@ export class UserResultEntity {
   @IsArray()
   @Type(() => UserEntity)
   @ValidateNested({ each: true })
-  data: UserEntity[];
+  items: UserEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
   @Type(() => MetaEntity)
   meta: MetaEntity;

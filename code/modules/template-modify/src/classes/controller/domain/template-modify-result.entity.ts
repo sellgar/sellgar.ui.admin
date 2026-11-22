@@ -1,7 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, ValidateNested } from 'class-validator';
-
-import { ProductTypeEntity, PropertyResultEntity } from '@library/domain';
+import { IsArray, IsOptional, ValidateNested } from 'class-validator';
+import { ProductTypeEntity, PropertyEntity } from '@library/domain';
 
 export class TemplateModifyResultEntity {
   @Expose()
@@ -11,7 +10,8 @@ export class TemplateModifyResultEntity {
   template?: ProductTypeEntity;
 
   @Expose()
-  @ValidateNested()
-  @Type(() => PropertyResultEntity)
-  properties: PropertyResultEntity;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PropertyEntity)
+  properties: PropertyEntity[];
 }

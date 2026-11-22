@@ -15,3 +15,6 @@
   `term` через RouteQueryServiceInterface, ProductController.loader передает
   этот параметр в ProductService.findAll. Поиск выполняется на сервере;
   введенный запрос восстанавливается из URL, сброс очищает term.
+
+- Догрузка: module-scoped singleton Collector, порции по 50, nextToken до null. Table.lastRowTrigger запускает общий useRevalidate() модуля; loading показывает штатный прогресс. Ошибка не продвигает курсор и не удаляет накопленные данные.
+- При изменении query-фильтра контроллер начинает новую коллекцию; страницы разных выборок не объединяются.

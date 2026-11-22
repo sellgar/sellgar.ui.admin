@@ -1,20 +1,20 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 import { EntityCollection } from '@sellgar/app';
 
 import { MetaEntity } from '../../meta';
-
 import { StoreProductEntity } from './store-product.entity.ts';
 
-@EntityCollection({ entity: StoreProductEntity, property: 'data' })
+@EntityCollection({ entity: StoreProductEntity, property: 'items' })
 export class StoreProductResultEntity {
   @IsArray()
   @Expose()
   @ValidateNested({ each: true })
   @Type(() => StoreProductEntity)
-  data: StoreProductEntity[];
+  items: StoreProductEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
   @Type(() => MetaEntity)
   meta: MetaEntity;

@@ -14,3 +14,6 @@
 - Название — auto, ИНН имеет ширину 144. Resize выключен.
 - Ячейки получают `ShopEntity` через `Cell.render`, без legacy `useCellData`.
 - Клик строки открывает `ShopReviewRoute`; фильтр списка остаётся у `ShopController`.
+
+- Догрузка: module-scoped singleton Collector, порции по 50, nextToken до null. Table.lastRowTrigger запускает общий useRevalidate() модуля; loading показывает штатный прогресс. Ошибка не продвигает курсор и не удаляет накопленные данные.
+- При изменении query-фильтра контроллер начинает новую коллекцию; страницы разных выборок не объединяются.

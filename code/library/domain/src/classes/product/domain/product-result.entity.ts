@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, IsInt, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 import { EntityCollection } from '@sellgar/app';
 
+import { MetaEntity } from '../../meta';
 import { ProductSummaryEntity } from './product-summary.entity.ts';
 
 @EntityCollection({ entity: ProductSummaryEntity, property: 'items' })
@@ -13,14 +14,8 @@ export class ProductResultEntity {
   items: ProductSummaryEntity[];
 
   @Expose()
-  @IsInt()
-  total: number;
-
-  @Expose()
-  @IsInt()
-  limit: number;
-
-  @Expose()
-  @IsInt()
-  offset: number;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MetaEntity)
+  meta: MetaEntity;
 }

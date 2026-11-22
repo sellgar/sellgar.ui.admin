@@ -4,7 +4,7 @@ import type { CreateProductTypeInput } from './input/create-product-type.input.t
 import type { UpdateProductTypeInput } from './input/update-product-type.input.ts';
 
 export abstract class ProductTypeGatewayInterface {
-  abstract findAll(): Promise<ProductTypeResultEntity>;
+  abstract findAll(limit?: number, nextToken?: string): Promise<ProductTypeResultEntity>;
   abstract findByUuid(uuid: string): Promise<ProductTypeEntity>;
   abstract create(input: CreateProductTypeInput): Promise<ProductTypeEntity>;
   abstract update(uuid: string, input: UpdateProductTypeInput): Promise<ProductTypeEntity>;

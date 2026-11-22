@@ -3,6 +3,7 @@ import { Controller, Inject } from '@sellgar/app';
 
 import { ProductListControllerInterface } from './product-list-controller.interface.ts';
 import { ProductSearchStoreInterface } from '../../store/product-search/product-search-store.interface.ts';
+
 @Controller()
 export class ProductListController implements ProductListControllerInterface {
   private generation = 0;
@@ -36,7 +37,7 @@ export class ProductListController implements ProductListControllerInterface {
     this.store.start();
 
     try {
-      const result = await this.productService.findAll({ term: query, limit: 20, offset: 0 });
+      const result = await this.productService.findAll({ term: query, limit: 20 });
 
       if (generation === this.generation) this.store.complete(result.items);
     } catch {

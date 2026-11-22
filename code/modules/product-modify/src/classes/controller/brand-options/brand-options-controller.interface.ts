@@ -1,5 +1,5 @@
-import type { BrandResultEntity } from '@library/domain';
+import type { BrandEntity } from '@library/domain';
 
 export abstract class BrandOptionsControllerInterface {
-  abstract loader(): Promise<BrandResultEntity>;
+  abstract loader(): Promise<BrandEntity[]>;
 }

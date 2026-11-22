@@ -1,13 +1,11 @@
 import * as App from '@sellgar/app/react';
 import { Caption, Field, Input, Label } from '@sellgar/kit';
-
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { TemplateModifyControllerInterface } from '../../classes/controller/template-modify-controller.interface.ts';
 import type { TemplateFormInput } from '../../classes/controller/input/template-form.input.ts';
 import { TemplateFields } from './template-fields';
-
 import s from './template-form.module.css';
 
 interface TemplateFormProps {
@@ -54,14 +52,14 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({ inProcess }) => {
           name={'productFields'}
           title={'Свойства товара'}
           description={'Общие свойства, которые заполняются один раз для товара.'}
-          properties={properties.items}
+          properties={properties}
           inProcess={inProcess}
         />
         <TemplateFields
           name={'variantFields'}
           title={'Свойства варианта'}
           description={'Свойства, которые заполняются отдельно для каждого варианта товара.'}
-          properties={properties.items}
+          properties={properties}
           inProcess={inProcess}
         />
       </div>

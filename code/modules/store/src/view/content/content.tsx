@@ -16,6 +16,7 @@ import { Visible } from './visible';
 import s from './default.module.css';
 
 export const Content: React.FC = () => {
+  const controller = App.useController(StoreControllerInterface);
   const loaderData = App.useLoaderData(StoreControllerInterface);
   const navigate = App.useNavigate();
   const revalidate = App.useRevalidate();
@@ -24,9 +25,14 @@ export const Content: React.FC = () => {
     <div className={s.wrapper}>
       <Table
         loading={revalidate.inProcess}
+        lastRowTrigger={
+          controller.hasMore && !revalidate.inProcess && !revalidate.error
+            ? { onLastRowVisible: () => void revalidate().catch(() => undefined) }
+            : undefined
+        }
         surface={'standalone'}
         size={'md'}
-        data={{ nodes: loaderData.data }}
+        data={{ nodes: loaderData.items }}
         row={{
           handlers: {
             doubleClick: ({ context }) => context.expansion?.toggle(),

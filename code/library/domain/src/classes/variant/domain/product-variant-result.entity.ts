@@ -1,8 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
 import { MetaEntity } from '../../meta';
-
 import { VariantEntity } from './variant.entity.ts';
 
 export class ProductVariantResultEntity {
@@ -10,9 +9,10 @@ export class ProductVariantResultEntity {
   @Expose()
   @ValidateNested({ each: true })
   @Type(() => VariantEntity)
-  data: VariantEntity[];
+  items: VariantEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
   @Type(() => MetaEntity)
   meta: MetaEntity;

@@ -1,14 +1,39 @@
-import { PropertyServiceInterface } from '@library/domain';
+import { PropertyServiceInterface, PropertyResultEntity } from '@library/domain';
 
-import { Controller, Inject } from '@sellgar/app';
+import { Collector, Controller, Inject } from '@sellgar/app';
 
 import { PropertyControllerInterface } from './property-controller.interface.ts';
 
+const PAGE_LIMIT = 50;
+
 @Controller()
 export class PropertyController implements PropertyControllerInterface {
-  constructor(@Inject(PropertyServiceInterface) private readonly propertyService: PropertyServiceInterface) {}
+  constructor(
+    @Inject(PropertyServiceInterface) private readonly propertyService: PropertyServiceInterface,
+    @Inject(Collector) private readonly collector: Collector<PropertyResultEntity, { nextToken: string | null }>,
+  ) {}
 
-  loader() {
-    return this.propertyService.findAll();
+  get hasMore(): boolean {
+    return this.collector.state.get('nextToken') !== null;
+  }
+
+  async loader(): Promise<PropertyResultEntity> {
+    const pages = await this.collector.execute(async (collection, state) => {
+      const nextToken = state.get('nextToken');
+
+      if (nextToken === null) return collection.append([]);
+
+      const page = await this.propertyService.findAll(PAGE_LIMIT, nextToken);
+
+      state.set('nextToken', page.meta.nextToken);
+
+      return collection.append([page]);
+    });
+    const items = new Map(pages.flatMap((page) => page.items).map((item) => [item.code, item]));
+
+    return Object.assign(new PropertyResultEntity(), {
+      items: [...items.values()],
+      meta: pages[pages.length - 1].meta,
+    });
   }
 }

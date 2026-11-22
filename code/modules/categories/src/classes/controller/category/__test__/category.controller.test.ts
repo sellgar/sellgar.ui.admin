@@ -8,7 +8,7 @@ import { CategoryQuery } from '../query/category.query.ts';
 const createFixture = (shopUuid?: string) => {
   const categories = { getTree: vi.fn().mockResolvedValue({ shopUuid: shopUuid ?? 'first', nodes: [] }) };
   const shops = {
-    findAll: vi.fn().mockResolvedValue({ data: [{ uuid: 'first', name: 'Первый' }], meta: { totalRows: 1 } }),
+    getCatalogue: vi.fn().mockResolvedValue([{ uuid: 'first', name: 'Первый' }]),
   };
   const query = { get: vi.fn().mockReturnValue({ shopUuid }), set: vi.fn().mockResolvedValue(undefined) };
   const controller = new CategoryController(
@@ -33,19 +33,18 @@ describe('CategoryController', () => {
     expect(fixture.categories.getTree).toHaveBeenCalledWith('second');
   });
 
-  it('loads all shop pages for the selector', async () => {
+  it('keeps every shop returned for the selector', async () => {
     const fixture = createFixture();
-    fixture.shops.findAll
-      .mockResolvedValueOnce({ data: [{ uuid: 'first', name: 'Первый' }], meta: { totalRows: 2 } })
-      .mockResolvedValueOnce({ data: [{ uuid: 'second', name: 'Второй' }], meta: { totalRows: 2 } });
-    const result = await fixture.controller.loader();
-    expect(result.shops).toHaveLength(2);
-    expect(fixture.shops.findAll).toHaveBeenLastCalledWith({ limit: 200, offset: 1 });
+    fixture.shops.getCatalogue.mockResolvedValue([
+      { uuid: 'first', name: 'Первый' },
+      { uuid: 'second', name: 'Второй' },
+    ]);
+    expect((await fixture.controller.loader()).shops).toHaveLength(2);
   });
 
   it('does not request a tree when there are no shops', async () => {
     const fixture = createFixture();
-    fixture.shops.findAll.mockResolvedValue({ data: [], meta: { totalRows: 0 } });
+    fixture.shops.getCatalogue.mockResolvedValue([]);
     await expect(fixture.controller.loader()).resolves.toEqual({ shops: [], tree: null });
     expect(fixture.categories.getTree).not.toHaveBeenCalled();
   });

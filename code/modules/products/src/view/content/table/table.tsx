@@ -19,6 +19,11 @@ export const Table: React.FC = () => {
     <div className={s.wrapper}>
       <TableComponent
         loading={revalidate.inProcess}
+        lastRowTrigger={
+          controller.hasMore && !revalidate.inProcess && !revalidate.error
+            ? { onLastRowVisible: () => void revalidate().catch(() => undefined) }
+            : undefined
+        }
         data={{ nodes: products.items }}
         row={{
           handlers: {

@@ -13,7 +13,7 @@ export const Type: React.FC = () => {
   const isEdit = Boolean(loaderData.product);
 
   const handleChange = (uuid?: string) => {
-    const type = loaderData.productTypes.items.find((item) => item.uuid === uuid);
+    const type = loaderData.productTypes.find((item) => item.uuid === uuid);
 
     setValue('typeUuid', uuid ?? '', { shouldValidate: true, shouldDirty: true });
     setValue('typeVersion', type?.version, { shouldValidate: true, shouldDirty: true });
@@ -39,7 +39,7 @@ export const Type: React.FC = () => {
             <Select
               optionKey={'uuid'}
               optionValue={'name'}
-              options={loaderData.productTypes.items}
+              options={loaderData.productTypes}
               disabled={isEdit}
               target={error?.message ? 'destructive' : undefined}
               value={field.value}

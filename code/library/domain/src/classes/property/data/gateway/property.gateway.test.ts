@@ -2,6 +2,7 @@ import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios
 import type { RequestExecutorInterface, RequestOperation } from '@sellgar/app';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { PropertyService } from '../../application/property.service.ts';
 import type { ConfigInterface } from '../../../../infrastructure/config/config.interface.ts';
 import type { DeviceServiceInterface } from '../../../../infrastructure/device/service/device-service.interface.ts';
 import { PropertyEntity } from '../../domain/property.entity.ts';
@@ -23,15 +24,19 @@ describe('Property catalogue through HTTP transport', () => {
   }));
   let requests: InternalAxiosRequestConfig[];
   let gateway: PropertyGateway;
+  let service: PropertyService;
 
   beforeEach(() => {
     requests = [];
     axios.defaults.adapter = (async (config) => {
       requests.push(config);
-      const offset = Number(config.params?.offset ?? 0);
+      const start = config.params?.nextToken === 'page-2' ? 50 : 0;
       return {
         config,
-        data: { items: properties.slice(offset, offset + 50), total: properties.length, limit: 50, offset },
+        data: {
+          items: properties.slice(start, start + 50),
+          meta: { limit: 50, nextToken: start === 0 ? 'page-2' : null },
+        },
         headers: {},
         status: 200,
         statusText: 'OK',
@@ -46,6 +51,7 @@ describe('Property catalogue through HTTP transport', () => {
       { getUniqueId: () => 'property-test-device' } as DeviceServiceInterface,
       executor,
     );
+    service = new PropertyService(gateway);
   });
 
   afterEach(() => {
@@ -53,23 +59,21 @@ describe('Property catalogue through HTTP transport', () => {
   });
 
   it('returns every property for templates beyond the first HTTP page', async () => {
-    const result = await gateway.findAll();
+    const result = await service.getCatalogue();
 
-    expect(result.items).toHaveLength(59);
-    expect(result.items.map((item) => item.code)).toEqual(properties.map((item) => item.code));
-    expect(result.items.every((item) => item instanceof PropertyEntity)).toBe(true);
-    expect(result).toMatchObject({ total: 59, limit: 59, offset: 0 });
-    expect(requests.map((request) => request.params?.offset ?? 0)).toEqual([0, 50]);
-    expect(requests[1].signal).toBe(requests[0].signal);
+    expect(result).toHaveLength(59);
+    expect(result.map((item) => item.code)).toEqual(properties.map((item) => item.code));
+    expect(result.every((item) => item instanceof PropertyEntity)).toBe(true);
+    expect(requests.map((request) => request.params?.nextToken)).toEqual([undefined, 'page-2']);
   });
 
   it('does not return a partial catalogue when a later page fails', async () => {
     const adapter = axios.defaults.adapter as AxiosAdapter;
     axios.defaults.adapter = async (config) => {
-      if (Number(config.params?.offset) > 0) throw new Error('Next page unavailable');
+      if (config.params?.nextToken === 'page-2') throw new Error('Next page unavailable');
       return adapter(config);
     };
 
-    await expect(gateway.findAll()).rejects.toThrow('Next page unavailable');
+    await expect(service.getCatalogue()).rejects.toThrow('Next page unavailable');
   });
 });

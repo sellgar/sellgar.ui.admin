@@ -6,7 +6,7 @@ import { PropertyEntity } from '../../domain/property.entity.ts';
 import { PropertyResultEntity } from '../../domain/property-result.entity.ts';
 
 export abstract class PropertyGatewayInterface {
-  abstract findAll(): Promise<PropertyResultEntity>;
+  abstract findAll(limit?: number, nextToken?: string): Promise<PropertyResultEntity>;
   abstract findByCode(code: string): Promise<PropertyEntity>;
   abstract create(input: CreatePropertyInput): Promise<PropertyEntity>;
   abstract update(code: string, input: UpdatePropertyInput): Promise<PropertyEntity>;

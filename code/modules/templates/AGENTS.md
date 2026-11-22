@@ -12,3 +12,5 @@
 - Список использует `@sellgar/kit/table`: внешний scroll owner, виртуализация, встроенная идентификация строк по объектам, `lg`.
 - Название — auto с минимумом 280, счётчики имеют ширину 176, resize выключен. Реактивные ячейки
   `Name` и `ProductCount` получают сущность через `Cell.render`.
+
+- Догрузка: module-scoped singleton Collector, порции по 50, nextToken до null. Table.lastRowTrigger запускает общий useRevalidate() модуля; loading показывает штатный прогресс. Ошибка не продвигает курсор и не удаляет накопленные данные.

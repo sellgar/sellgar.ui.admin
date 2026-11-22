@@ -11,3 +11,5 @@
 - Ячейки получают `PropertyEntity` через `Cell.render`, без legacy `useCellData`.
 - Таблица и ячейки реактивны к изменениям `@Entity`/`@EntityCollection`.
 - Столбец описания занимает доступную ширину и переносит длинный текст.
+
+- Догрузка: module-scoped singleton Collector, порции по 50, nextToken до null. Table.lastRowTrigger запускает общий useRevalidate() модуля; loading показывает штатный прогресс. Ошибка не продвигает курсор и не удаляет накопленные данные.

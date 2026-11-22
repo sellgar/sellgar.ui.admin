@@ -1,34 +1,19 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, IsInt, Min, ValidateNested } from 'class-validator';
+import { IsDefined, IsArray, ValidateNested } from 'class-validator';
 
+import { MetaEntity } from '../../meta';
 import { ShopEntity } from './shop.entity.ts';
-
-export class ShopPageMetaEntity {
-  @Expose()
-  @IsInt()
-  @Min(0)
-  totalRows: number;
-
-  @Expose()
-  @IsInt()
-  @Min(1)
-  limit: number;
-
-  @Expose()
-  @IsInt()
-  @Min(0)
-  offset: number;
-}
 
 export class ShopResultEntity {
   @IsArray()
   @Expose()
   @ValidateNested({ each: true })
   @Type(() => ShopEntity)
-  data: ShopEntity[];
+  items: ShopEntity[];
 
   @Expose()
+  @IsDefined()
   @ValidateNested()
-  @Type(() => ShopPageMetaEntity)
-  meta: ShopPageMetaEntity;
+  @Type(() => MetaEntity)
+  meta: MetaEntity;
 }
