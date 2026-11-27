@@ -1,6 +1,6 @@
 import { PropertyKind, type PropertyEntity } from '@library/domain';
-import { Button, Caption, Checkbox, Field, Label, Select } from '@sellgar/kit';
-import { DragMove2LineIcon } from '@sellgar/kit/icons';
+import { Button, Caption, Checkbox, Field, Select, Typography } from '@sellgar/kit';
+import { DeleteBinLineIcon, DragMove2LineIcon } from '@sellgar/kit/icons';
 import * as Motion from 'framer-motion';
 import React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
@@ -10,7 +10,7 @@ import s from './default.module.css';
 
 type FieldCollectionName = 'productFields' | 'variantFields';
 
-interface TemplateFieldRowProps {
+interface IProps {
   readonly name: FieldCollectionName;
   readonly index: number;
   readonly properties: PropertyEntity[];
@@ -20,26 +20,30 @@ interface TemplateFieldRowProps {
   readonly onDelete: () => void;
 }
 
-export const TemplateFieldRow: React.FC<TemplateFieldRowProps> = (props) => {
+export const TemplateFieldRow: React.FC<IProps> = (props) => {
   const { control, setValue } = useFormContext<TemplateFormInput>();
   const propertyCode = useWatch({ control, name: `${props.name}.${props.index}.propertyCode` });
   const property = props.properties.find((item) => item.code === propertyCode);
   const booleanProperty = property?.kind === PropertyKind.BOOLEAN;
   const dragControls = Motion.useDragControls();
+  const [dragging, setDragging] = React.useState(false);
 
   return (
     <Motion.Reorder.Item
-      className={s.row}
+      className={s.wrapper}
       as={'div'}
       value={props.fieldId}
       dragListener={false}
       dragControls={dragControls}
       drag={props.inProcess ? false : 'y'}
+      data-dragging={dragging}
+      onDragStart={() => setDragging(true)}
+      onDragEnd={() => setDragging(false)}
     >
       <span className={s.handle}>
         <Button.Icon
           type={'button'}
-          size={'xs'}
+          size={'sm'}
           style={'ghost'}
           aria-label={`Перетащить свойство ${property?.name ?? props.index + 1}`}
           title={'Перетащите для изменения порядка'}
@@ -63,11 +67,9 @@ export const TemplateFieldRow: React.FC<TemplateFieldRowProps> = (props) => {
           disabled={props.inProcess}
           render={({ field, fieldState: { error } }) => (
             <Field>
-              <Field.Label>
-                <Label label={'Свойство'} />
-              </Field.Label>
               <Field.Content>
                 <Select
+                  size={'xs'}
                   options={props.properties}
                   optionKey={'code'}
                   optionValue={'name'}
@@ -96,45 +98,63 @@ export const TemplateFieldRow: React.FC<TemplateFieldRowProps> = (props) => {
       </div>
 
       <div className={s.flags}>
-        <Controller
-          name={`${props.name}.${props.index}.required`}
-          control={control}
-          render={({ field }) => (
-            <Checkbox
-              label={'Обязательное'}
-              checked={field.value}
-              disabled={props.inProcess}
-              onBlur={field.onBlur}
-              onChange={(event) => field.onChange(event.currentTarget.checked)}
-            />
-          )}
-        />
-        <Controller
-          name={`${props.name}.${props.index}.multiple`}
-          control={control}
-          render={({ field }) => (
-            <Checkbox
-              label={'Несколько значений'}
-              checked={field.value}
-              disabled={props.inProcess || booleanProperty}
-              onBlur={field.onBlur}
-              onChange={(event) => field.onChange(event.currentTarget.checked)}
-            />
-          )}
-        />
+        <div className={s.flag}>
+          <Controller
+            name={`${props.name}.${props.index}.required`}
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id={`${props.fieldId}-required`}
+                size={'sm'}
+                aria-label={`Обязательное: ${property?.name ?? props.index + 1}`}
+                checked={field.value}
+                disabled={props.inProcess}
+                onBlur={field.onBlur}
+                onChange={(event) => field.onChange(event.currentTarget.checked)}
+              />
+            )}
+          />
+          <Typography size={'caption-l'}>
+            <label className={s['mobile-label']} htmlFor={`${props.fieldId}-required`}>
+              Обязательное
+            </label>
+          </Typography>
+        </div>
+        <div className={s.flag}>
+          <Controller
+            name={`${props.name}.${props.index}.multiple`}
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id={`${props.fieldId}-multiple`}
+                size={'sm'}
+                aria-label={`Несколько значений: ${property?.name ?? props.index + 1}`}
+                checked={field.value}
+                disabled={props.inProcess || booleanProperty}
+                onBlur={field.onBlur}
+                onChange={(event) => field.onChange(event.currentTarget.checked)}
+              />
+            )}
+          />
+          <Typography size={'caption-l'}>
+            <label className={s['mobile-label']} htmlFor={`${props.fieldId}-multiple`}>
+              Несколько значений
+            </label>
+          </Typography>
+        </div>
       </div>
 
-      <div className={s.actions}>
-        <Button
+      <div className={s.remove}>
+        <Button.Icon
           type={'button'}
-          size={'xs'}
-          style={'secondary'}
-          target={'destructive'}
+          size={'sm'}
+          style={'ghost'}
+          aria-label={`Удалить свойство ${property?.name ?? props.index + 1}`}
+          title={'Удалить свойство'}
+          leadIcon={<DeleteBinLineIcon />}
           disabled={props.inProcess}
           onClick={props.onDelete}
-        >
-          Удалить
-        </Button>
+        />
       </div>
     </Motion.Reorder.Item>
   );

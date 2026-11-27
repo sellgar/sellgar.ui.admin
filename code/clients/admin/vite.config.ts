@@ -15,6 +15,15 @@ function createCodeSplittingGroups(mapping: Record<string, string[]>) {
 
 export default defineConfig({
   cacheDir: '/tmp/.vite',
+  server: {
+    proxy: {
+      '/api/admin': {
+        target: 'http://127.0.0.1:4020',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/admin/, ''),
+      },
+    },
+  },
   build: {
     modulePreload: false,
     outDir: 'build',

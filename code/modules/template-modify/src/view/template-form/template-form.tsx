@@ -1,5 +1,5 @@
 import * as App from '@sellgar/app/react';
-import { Caption, Field, Input, Label } from '@sellgar/kit';
+import { Caption, Field, Input, Label, Typography } from '@sellgar/kit';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -8,22 +8,24 @@ import type { TemplateFormInput } from '../../classes/controller/input/template-
 import { TemplateFields } from './template-fields';
 import s from './template-form.module.css';
 
-interface TemplateFormProps {
+interface IProps {
   readonly inProcess: boolean;
 }
 
-export const TemplateForm: React.FC<TemplateFormProps> = ({ inProcess }) => {
+export const TemplateForm: React.FC<IProps> = (props) => {
   const { properties } = App.useLoaderData(TemplateModifyControllerInterface);
   const { control } = useFormContext<TemplateFormInput>();
 
   return (
     <div className={s.wrapper}>
       <section className={s.section}>
-        <h3 className={s.title}>Основная информация</h3>
+        <Typography size={'body-m'} weight={'semi-bold'}>
+          <h3 className={s.title}>Основная информация</h3>
+        </Typography>
         <Controller
           name={'name'}
           control={control}
-          disabled={inProcess}
+          disabled={props.inProcess}
           render={({ field, fieldState: { error } }) => (
             <Field>
               <Field.Label>
@@ -47,20 +49,20 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({ inProcess }) => {
         />
       </section>
 
-      <div className={s.columns}>
+      <div className={s['field-groups']}>
         <TemplateFields
           name={'productFields'}
           title={'Свойства товара'}
           description={'Общие свойства, которые заполняются один раз для товара.'}
           properties={properties}
-          inProcess={inProcess}
+          inProcess={props.inProcess}
         />
         <TemplateFields
           name={'variantFields'}
           title={'Свойства варианта'}
           description={'Свойства, которые заполняются отдельно для каждого варианта товара.'}
           properties={properties}
-          inProcess={inProcess}
+          inProcess={props.inProcess}
         />
       </div>
     </div>

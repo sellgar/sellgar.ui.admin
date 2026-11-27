@@ -1,53 +1,95 @@
-.row {
-  display: flex;
-  flex-wrap: wrap;
+.wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--template-field-columns);
   gap: var(--numbers-16);
-  align-items: end;
-  padding: var(--numbers-12);
-  border: var(--numbers-1) solid var(--border-base-divider);
+  align-items: center;
+  min-height: var(--numbers-56);
+  padding: var(--numbers-8);
+  background: var(--background-surface-neutral);
+}
+
+.wrapper[data-dragging='true'] {
+  z-index: 1;
+  outline: var(--numbers-1) solid var(--border-action-focus-light);
+  outline-offset: calc(-1 * var(--numbers-1));
   border-radius: var(--numbers-8);
+  background: var(--background-surface-neutral);
+  box-shadow: var(--measurements-shadows-xs);
 }
 
 .property {
-  flex: 1 1 var(--numbers-192);
   min-width: 0;
 }
 
-.flags,
-.actions {
+.flags {
+  display: contents;
+}
+
+.flag {
   display: flex;
   gap: var(--numbers-8);
   align-items: center;
-  min-height: var(--numbers-40);
+  justify-content: center;
+  min-height: var(--numbers-32);
 }
 
-.flags {
-  flex: 1 1 var(--numbers-256);
-  flex-wrap: wrap;
+.mobile-label {
+  display: none;
 }
 
-.actions {
-  flex: 0 0 auto;
-  margin-left: auto;
-}
-
-@media (max-width: 720px) {
-  .row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-  }
-
-  .flags,
-  .actions {
-    grid-column: 2;
-    margin-left: 0;
-  }
+.handle,
+.remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  padding-top: var(--numbers-4);
+  opacity: 0.7;
 }
 
 .handle {
-  display: flex;
-  flex-shrink: 0;
-  align-self: center;
+  cursor: grab;
   touch-action: none;
+}
+
+.wrapper[data-dragging='true'] .handle {
+  cursor: grabbing;
+  opacity: 1;
+}
+
+.wrapper:focus-within .handle,
+.wrapper:focus-within .remove {
+  opacity: 1;
+}
+
+@container (max-width: 600px) {
+  .wrapper {
+    grid-template-columns: var(--numbers-32) minmax(0, 1fr) var(--numbers-32);
+    column-gap: var(--numbers-8);
+    row-gap: var(--numbers-4);
+  }
+
+  .flags {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 2 / -1;
+    grid-row: 2;
+    gap: var(--numbers-16);
+  }
+
+  .flag {
+    justify-content: flex-start;
+  }
+
+  .mobile-label {
+    display: inline;
+    cursor: pointer;
+    color: var(--text-base-secondary);
+  }
+
+  .remove {
+    grid-column: 3;
+    grid-row: 1;
+  }
 }

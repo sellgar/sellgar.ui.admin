@@ -1,5 +1,5 @@
 import type { PropertyEntity } from '@library/domain';
-import { Button, Caption } from '@sellgar/kit';
+import { Button, Caption, Typography } from '@sellgar/kit';
 import { AddLineIcon } from '@sellgar/kit/icons';
 
 import * as Motion from 'framer-motion';
@@ -13,7 +13,7 @@ import s from './default.module.css';
 
 type FieldCollectionName = 'productFields' | 'variantFields';
 
-interface TemplateFieldsProps {
+interface IProps {
   readonly name: FieldCollectionName;
   readonly title: string;
   readonly description: string;
@@ -21,7 +21,7 @@ interface TemplateFieldsProps {
   readonly inProcess: boolean;
 }
 
-export const TemplateFields: React.FC<TemplateFieldsProps> = (props) => {
+export const TemplateFields: React.FC<IProps> = (props) => {
   const {
     control,
     formState: { errors },
@@ -44,23 +44,24 @@ export const TemplateFields: React.FC<TemplateFieldsProps> = (props) => {
   };
 
   return (
-    <section className={s.section}>
+    <section className={s.wrapper}>
       <div className={s.header}>
-        <div>
+        <Typography size={'body-m'} weight={'semi-bold'}>
           <h3 className={s.title}>{props.title}</h3>
+        </Typography>
+        <Typography size={'caption-l'} weight={'regular'}>
           <p className={s.description}>{props.description}</p>
-        </div>
-        <Button
-          type={'button'}
-          size={'xs'}
-          style={'secondary'}
-          leadIcon={<AddLineIcon />}
-          disabled={props.inProcess}
-          onClick={() => fields.append({ propertyCode: '', required: false, multiple: false })}
-        >
-          Добавить свойство
-        </Button>
+        </Typography>
       </div>
+
+      {fields.fields.length > 0 && (
+        <div className={s['column-headings']} aria-hidden={true}>
+          <Typography size={'caption-m'} weight={'regular'}>
+            <span className={s['required-heading']}>Обязательное</span>
+            <span className={s['multiple-heading']}>Несколько значений</span>
+          </Typography>
+        </div>
+      )}
 
       <Motion.MotionConfig reducedMotion={'always'}>
         <Motion.Reorder.Group
@@ -70,22 +71,39 @@ export const TemplateFields: React.FC<TemplateFieldsProps> = (props) => {
           values={fields.fields.map((field) => field.id)}
           onReorder={handleReorder}
         >
-          {fields.fields.length === 0 && <p className={s.empty}>Свойства не добавлены</p>}
+          {fields.fields.length === 0 && (
+            <Typography size={'caption-l'} weight={'regular'}>
+              <p className={s.empty}>Свойства не добавлены</p>
+            </Typography>
+          )}
           {fields.fields.map((field, index) => (
-            <TemplateFieldRow
-              key={field.id}
-              name={props.name}
-              index={index}
-              properties={props.properties}
-              inProcess={props.inProcess}
-              fieldId={field.id}
-              onMove={(offset) => moveField(index, index + offset)}
-              onDelete={() => fields.remove(index)}
-            />
+            <div key={field.id} className={s.slot}>
+              <TemplateFieldRow
+                name={props.name}
+                index={index}
+                properties={props.properties}
+                inProcess={props.inProcess}
+                fieldId={field.id}
+                onMove={(offset) => moveField(index, index + offset)}
+                onDelete={() => fields.remove(index)}
+              />
+            </div>
           ))}
         </Motion.Reorder.Group>
       </Motion.MotionConfig>
-      {message && <Caption state={'destructive'} caption={message} />}
+      {message.length > 0 && <Caption state={'destructive'} caption={message} />}
+      <div className={s.add}>
+        <Button
+          type={'button'}
+          size={'xs'}
+          style={'ghost'}
+          leadIcon={<AddLineIcon />}
+          disabled={props.inProcess}
+          onClick={() => fields.append({ propertyCode: '', required: false, multiple: false })}
+        >
+          Добавить свойство
+        </Button>
+      </div>
     </section>
   );
 };
