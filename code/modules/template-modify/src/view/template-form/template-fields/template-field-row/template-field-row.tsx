@@ -27,6 +27,10 @@ const TemplateFieldRowComponent: React.FC<IProps> = (props) => {
   const search = useController(PropertySearchControllerInterface);
   const propertyCode = useWatch({ control, name: `${props.name}.${props.index}.propertyCode` });
   const property = search.getSelected(propertyCode) ?? props.properties.find((item) => item.code === propertyCode);
+  const options = [...(property ? [property] : []), ...search.options.filter((item) => item.code !== property?.code)];
+  const loading = search.loading;
+  const loadingMore = search.loadingMore;
+  const searchError = search.error;
   const booleanProperty = property?.kind === PropertyKind.BOOLEAN;
   const dragControls = Motion.useDragControls();
   const [dragging, setDragging] = React.useState(false);
@@ -74,16 +78,16 @@ const TemplateFieldRowComponent: React.FC<IProps> = (props) => {
                 <InputSelect
                   ref={field.ref}
                   size={'xs'}
-                  options={search.options}
+                  options={options}
                   optionKey={'code'}
                   optionValue={'name'}
                   value={property ?? null}
                   placeholder={'Выберите свойство'}
                   disabled={props.inProcess}
                   target={error ? 'destructive' : undefined}
-                  loading={search.loading}
-                  loadingMore={search.loadingMore}
-                  error={search.error}
+                  loading={loading}
+                  loadingMore={loadingMore}
+                  error={searchError}
                   searchPlaceholder={'Название или код свойства'}
                   onSearch={search.search}
                   onEndReached={search.loadNext}
