@@ -52,7 +52,8 @@
     "modules/**/*",
     "utils/**/*",
     "widgets/**/*",
-    "layouts/**/*"
+    "layouts/**/*",
+    "reporters/*"
   ],
   "engines": {
     "node": ">=24"

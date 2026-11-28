@@ -13,6 +13,7 @@
 - Initializers приложения: `src/application/initializers`.
 - Application-level presentations: `src/application/presentations`.
 - Подключение `@feature/service-worker` через `app.features`.
+- Подключение `@reporter/sentry` до `compose()` в bootstrap; конфигурация и ответственность описаны в `reporters/sentry/AGENTS.md`.
 - Подключение пресета `@feature/service-worker/vite` в `vite.config.ts`; правила
   регистрации, активации и кеширования принадлежат фиче. Manifest и иконки — приложению.
 - Глобальные стили: `src/styles/index.css`.

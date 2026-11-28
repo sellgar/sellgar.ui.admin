@@ -125,3 +125,4 @@ export type {
 } from './classes';
 
 export { ConfigInterface } from './infrastructure/config/config.interface.ts';
+export { EnvConfigInterface } from './infrastructure/env-config';

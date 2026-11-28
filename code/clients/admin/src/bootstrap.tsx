@@ -1,4 +1,5 @@
 import { createWebRouterBridge } from '@sellgar/app/react';
+import { SentryReporter } from '@reporter/sentry';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -10,6 +11,8 @@ const app = new AdminApplication({
     basePath: import.meta.env['BASE_URL'],
   }),
 });
+
+app.reporter([SentryReporter]);
 
 app.compose();
 

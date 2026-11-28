@@ -1580,6 +1580,7 @@ __metadata:
     "@module/templates": "npm:0.0.1"
     "@module/units": "npm:0.0.1"
     "@originjs/vite-plugin-federation": "npm:1.4.1"
+    "@reporter/sentry": "npm:0.0.1"
     "@sellgar/app": "npm:0.0.1"
     "@types/node": "npm:26.6.5"
     "@types/react": "npm:19.3.0"
@@ -4050,6 +4051,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reporter/sentry@npm:0.0.1, @reporter/sentry@workspace:reporters/sentry":
+  version: 0.0.0-use.local
+  resolution: "@reporter/sentry@workspace:reporters/sentry"
+  dependencies:
+    "@library/domain": "npm:0.0.1"
+    "@sellgar/app": "npm:0.0.1"
+    "@sentry/react": "npm:11.14.0"
+    class-validator: "npm:0.15.1"
+    react: "npm:19.3.1"
+    react-dom: "npm:19.3.1"
+  languageName: unknown
+  linkType: soft
+
 "@rolldown/binding-android-arm-eabi@npm:1.2.13":
   version: 1.2.13
   resolution: "@rolldown/binding-android-arm-eabi@npm:1.2.13"
@@ -4656,6 +4670,93 @@ __metadata:
     fake-indexeddb: "npm:6.2.6"
   languageName: unknown
   linkType: soft
+
+"@sentry/browser-utils@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/browser-utils@npm:11.14.0"
+  dependencies:
+    "@sentry/conventions": "npm:^0.33.0"
+    "@sentry/core": "npm:11.14.0"
+    web-vitals: "npm:^6.2.3"
+  checksum: 10/2c086900ee63b0438e5387d8a60a299591e0dce1df9b343df8d76531c0b6028cf2f9d591b1e544168889782f339e8a5321e65c5b45cd4d0e2c90f16359d7dc77
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/browser@npm:11.14.0"
+  dependencies:
+    "@sentry/browser-utils": "npm:11.14.0"
+    "@sentry/conventions": "npm:^0.33.0"
+    "@sentry/core": "npm:11.14.0"
+    "@sentry/feedback": "npm:11.14.0"
+    "@sentry/replay": "npm:11.14.0"
+    "@sentry/replay-canvas": "npm:11.14.0"
+  checksum: 10/dbcac0141a2bc9ce0dffb8e1bc0fd29002d8536dbd2982e96368fba2d98ed176a18af3974c0b356b744f89b9452c47050cbebb095fd70d261269626753ef8ee4
+  languageName: node
+  linkType: hard
+
+"@sentry/conventions@npm:^0.33.0":
+  version: 0.33.0
+  resolution: "@sentry/conventions@npm:0.33.0"
+  checksum: 10/05ff2981f17586f86bdfd08803c5540900fa7bf2d3124440aee23e347d88a09e9adfcf41424f16d1ad8d518c3603c2a00b342bcd11b3f573479f430b6a583227
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/core@npm:11.14.0"
+  dependencies:
+    "@sentry/conventions": "npm:^0.33.0"
+  checksum: 10/2497ee4d56ecf16026d18b08ddd2ae2632af857d82e27a5fc69817f44efde54b8d248de8c405cce1b40a6b3dbb83ed87a6606828e413a3e9a24ead59c0930513
+  languageName: node
+  linkType: hard
+
+"@sentry/feedback@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/feedback@npm:11.14.0"
+  dependencies:
+    "@sentry/core": "npm:11.14.0"
+  checksum: 10/bfea66b2afcc6fafce5acb9914103a1f3d6e9d64c718afcd7bd07e1b950f34eec87e3d691c3dd9f95eae36f56321a3d0ad2d8e41541fd46bd6aa66cdf21e8eea
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/react@npm:11.14.0"
+  dependencies:
+    "@sentry/browser": "npm:11.14.0"
+    "@sentry/conventions": "npm:^0.33.0"
+    "@sentry/core": "npm:11.14.0"
+  peerDependencies:
+    react: 17.x || 18.x || 19.x
+    react-router: 6.x || 7.x || 8.x
+  peerDependenciesMeta:
+    react-router:
+      optional: true
+  checksum: 10/61cd5132da66d1e8a52cf5d68cc3aabee6e55b99217f295b684b529d7837a8cd4110e94e87f5d94cf53e6f9a33263670cc92d0e3cff9243f8346d042e5391350
+  languageName: node
+  linkType: hard
+
+"@sentry/replay-canvas@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/replay-canvas@npm:11.14.0"
+  dependencies:
+    "@sentry/core": "npm:11.14.0"
+    "@sentry/replay": "npm:11.14.0"
+  checksum: 10/fdd9a2cc1f3f8f988e4e3157d342eb419c27302fbbccce5b7842792381a1d4249a5abaf861a07d819a4f438d9536fb134da984c324411c7d52446354efd407e2
+  languageName: node
+  linkType: hard
+
+"@sentry/replay@npm:11.14.0":
+  version: 11.14.0
+  resolution: "@sentry/replay@npm:11.14.0"
+  dependencies:
+    "@sentry/browser-utils": "npm:11.14.0"
+    "@sentry/core": "npm:11.14.0"
+  checksum: 10/a0f07983713362ac36cb7285d4ed063db466101e0c3e2890c661591ca2b32a4ab340d60ba4cf2ab2d48f2eaf392517d471b879cec05a4c232e1495ede52b74a5
+  languageName: node
+  linkType: hard
 
 "@sindresorhus/merge-streams@npm:^4.0.0":
   version: 4.0.0
@@ -12424,6 +12525,13 @@ __metadata:
   dependencies:
     xml-name-validator: "npm:^5.0.0"
   checksum: 10/0a61cfbfc2b042a5422f4e3f853973ce9019cee88a18d13ad4d8522ce928b474aee9c682f30e2d1004aa117f36e66ae7d97861f39b1745aa0084420b72c91505
+  languageName: node
+  linkType: hard
+
+"web-vitals@npm:^6.2.3":
+  version: 6.2.3
+  resolution: "web-vitals@npm:6.2.3"
+  checksum: 10/1dd6800c27ef725e5cd4f3e0d7902e017549813474024bd1ce00a3fb839f63109a71e168d4da740cb6c7ddfbfba2d5f2cc1be59dad176ea10732fbd34dbec974
   languageName: node
   linkType: hard
 

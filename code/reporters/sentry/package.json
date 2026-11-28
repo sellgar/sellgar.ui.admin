@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "@reporter/sentry",
+  "version": "0.0.1",
+  "description": "Sentry application reporter",
+  "license": "UNLICENSED",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@library/domain": "0.0.1",
+    "@sellgar/app": "0.0.1",
+    "@sentry/react": "11.14.0",
+    "class-validator": "0.15.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}
