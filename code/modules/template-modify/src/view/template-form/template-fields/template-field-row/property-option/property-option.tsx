@@ -20,7 +20,7 @@ export const PropertyOption: React.FC<IProps> = (props) => (
   <SelectOption
     label={props.property.name}
     caption={kindLabels[props.property.kind]}
-    supportText={props.property.unit?.symbol}
+    supportText={props.property.unit ? `(${props.property.unit.symbol})` : undefined}
     selected={props.selected}
   />
 );
