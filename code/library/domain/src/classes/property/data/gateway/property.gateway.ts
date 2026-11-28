@@ -8,6 +8,8 @@ import { DeviceServiceInterface } from '../../../../infrastructure/device/servic
 import { HttpRequest } from '../../../../infrastructure/http-client';
 import { PropertyEntity } from '../../domain/property.entity.ts';
 import { PropertyResultEntity } from '../../domain/property-result.entity.ts';
+import { PropertySortField } from '../../domain/property-sort-field.enum.ts';
+import { PropertySortDirection } from '../../domain/property-sort-direction.enum.ts';
 import { CreatePropertyDto } from './dto/create-property.dto.ts';
 import { UpdatePropertyDto } from './dto/update-property.dto.ts';
 import { CreatePropertyOptionDto } from './dto/create-property-option.dto.ts';
@@ -55,8 +57,14 @@ export class PropertyGateway implements PropertyGatewayInterface {
     return this.toProperty(result);
   }
 
-  async findAll(limit?: number, nextToken?: string): Promise<PropertyResultEntity> {
-    const dto = plainToInstance(PropertyQueryDto, { limit, nextToken });
+  async findAll(
+    limit?: number,
+    nextToken?: string,
+    search?: string,
+    sortBy?: PropertySortField,
+    sortDirection?: PropertySortDirection,
+  ): Promise<PropertyResultEntity> {
+    const dto = plainToInstance(PropertyQueryDto, { limit, nextToken, search, sortBy, sortDirection });
     await validateOrReject(dto);
     const response = await this.requestExecutor.run({ scope: 'properties:list' }, ({ signal }) => {
       const request = new HttpRequest({ deviceId: this.deviceService.getUniqueId(), signal });

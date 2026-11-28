@@ -3665,6 +3665,7 @@ __metadata:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.15.1"
     framer-motion: "npm:14.4.0"
+    mobx: "npm:6.16.1"
     react: "npm:19.3.1"
     react-dom: "npm:19.3.1"
     react-hook-form: "npm:7.90.0"

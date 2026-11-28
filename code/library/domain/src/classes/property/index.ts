@@ -1,5 +1,7 @@
 export { PropertyEntity } from './domain/property.entity.ts';
 export { PropertyKind } from './domain/property-kind.enum.ts';
+export { PropertySortField } from './domain/property-sort-field.enum.ts';
+export { PropertySortDirection } from './domain/property-sort-direction.enum.ts';
 export { PropertyResultEntity } from './domain/property-result.entity.ts';
 export { PropertyServiceInterface } from './application/property-service.interface.ts';
 export type { CreatePropertyInput } from './data/gateway/input/create-property.input.ts';

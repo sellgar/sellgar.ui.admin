@@ -1,7 +1,26 @@
 import { Expose } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+
+import { PropertySortField } from '../../../domain/property-sort-field.enum.ts';
+import { PropertySortDirection } from '../../../domain/property-sort-direction.enum.ts';
 
 export class PropertyQueryDto {
+  @Expose()
+  @IsOptional()
+  @IsString()
+  @MaxLength(256)
+  search?: string;
+
+  @Expose()
+  @IsOptional()
+  @IsEnum(PropertySortField)
+  sortBy?: PropertySortField;
+
+  @Expose()
+  @IsOptional()
+  @IsEnum(PropertySortDirection)
+  sortDirection?: PropertySortDirection;
+
   @Expose()
   @IsOptional()
   @IsInt()

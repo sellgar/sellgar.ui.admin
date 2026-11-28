@@ -1,11 +1,13 @@
 import { PropertyKind, type PropertyEntity } from '@library/domain';
-import { Button, Caption, Checkbox, Field, Select, Typography } from '@sellgar/kit';
+import { Button, Caption, Checkbox, Field, InputSelect, Typography } from '@sellgar/kit';
+import { reactive, useController } from '@sellgar/app/react';
 import { DeleteBinLineIcon, DragMove2LineIcon } from '@sellgar/kit/icons';
 import * as Motion from 'framer-motion';
 import React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import type { TemplateFormInput } from '../../../../classes/controller/input/template-form.input.ts';
+import { PropertySearchControllerInterface } from '../../../../classes/controller/property-search/property-search-controller.interface.ts';
 import s from './default.module.css';
 
 type FieldCollectionName = 'productFields' | 'variantFields';
@@ -20,10 +22,11 @@ interface IProps {
   readonly onDelete: () => void;
 }
 
-export const TemplateFieldRow: React.FC<IProps> = (props) => {
+const TemplateFieldRowComponent: React.FC<IProps> = (props) => {
   const { control, setValue } = useFormContext<TemplateFormInput>();
+  const search = useController(PropertySearchControllerInterface);
   const propertyCode = useWatch({ control, name: `${props.name}.${props.index}.propertyCode` });
-  const property = props.properties.find((item) => item.code === propertyCode);
+  const property = search.getSelected(propertyCode) ?? props.properties.find((item) => item.code === propertyCode);
   const booleanProperty = property?.kind === PropertyKind.BOOLEAN;
   const dragControls = Motion.useDragControls();
   const [dragging, setDragging] = React.useState(false);
@@ -68,20 +71,27 @@ export const TemplateFieldRow: React.FC<IProps> = (props) => {
           render={({ field, fieldState: { error } }) => (
             <Field>
               <Field.Content>
-                <Select
+                <InputSelect
+                  ref={field.ref}
                   size={'xs'}
-                  options={props.properties}
+                  options={search.options}
                   optionKey={'code'}
                   optionValue={'name'}
-                  value={field.value}
+                  value={property ?? null}
                   placeholder={'Выберите свойство'}
                   disabled={props.inProcess}
                   target={error ? 'destructive' : undefined}
+                  loading={search.loading}
+                  loadingMore={search.loadingMore}
+                  error={search.error}
+                  searchPlaceholder={'Название или код свойства'}
+                  onSearch={search.search}
+                  onEndReached={search.loadNext}
                   onBlur={field.onBlur}
                   onChange={(value) => {
-                    field.onChange(value ?? '');
-                    const selected = props.properties.find((item) => item.code === value);
-                    if (selected?.kind === PropertyKind.BOOLEAN) {
+                    if (value) search.remember(value);
+                    field.onChange(value?.code ?? '');
+                    if (value?.kind === PropertyKind.BOOLEAN) {
                       setValue(`${props.name}.${props.index}.multiple`, false, { shouldDirty: true });
                     }
                   }}
@@ -159,3 +169,5 @@ export const TemplateFieldRow: React.FC<IProps> = (props) => {
     </Motion.Reorder.Item>
   );
 };
+
+export const TemplateFieldRow = reactive(TemplateFieldRowComponent);
