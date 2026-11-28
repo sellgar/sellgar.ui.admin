@@ -8,6 +8,7 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import type { TemplateFormInput } from '../../../../classes/controller/input/template-form.input.ts';
 import { PropertySearchControllerInterface } from '../../../../classes/controller/property-search/property-search-controller.interface.ts';
+import { PropertyOption } from './property-option/index.ts';
 import s from './default.module.css';
 
 type FieldCollectionName = 'productFields' | 'variantFields';
@@ -81,6 +82,9 @@ const TemplateFieldRowComponent: React.FC<IProps> = (props) => {
                   options={options}
                   optionKey={'code'}
                   optionValue={'name'}
+                  templateOption={(option) => (
+                    <PropertyOption property={option} selected={option.code === propertyCode} />
+                  )}
                   value={property ?? null}
                   placeholder={'Выберите свойство'}
                   disabled={props.inProcess}
